@@ -1,6 +1,6 @@
 package de.jonas.engine.io.math;
 
-public class Vector3f {
+@SuppressWarnings("all") public class Vector3f {
     //Variables
     private float x, y, z;
     //Constructors
@@ -35,6 +35,12 @@ public class Vector3f {
         this.z += valZ;
         return this;
     }
+    public Vector3f add(Vector3f valVec) {
+        this.x += valVec.x;
+        this.y += valVec.y;
+        this.z += valVec.z;
+        return this;
+    }
     //Subtraction
     public Vector3f sub(float value) {
         this.x -= value;
@@ -46,6 +52,12 @@ public class Vector3f {
         this.x -= valX;
         this.y -= valY;
         this.z -= valZ;
+        return this;
+    }
+    public Vector3f sub(Vector3f valVec) {
+        this.x -= valVec.x;
+        this.y -= valVec.y;
+        this.z -= valVec.z;
         return this;
     }
     //Multiplication
@@ -61,6 +73,12 @@ public class Vector3f {
         this.z *= valZ;
         return this;
     }
+    public Vector3f mult(Vector3f valVec) {
+        this.x *= valVec.x;
+        this.y *= valVec.y;
+        this.z *= valVec.z;
+        return this;
+    }
     //Division
     public Vector3f dev(float value) {
         this.x /= value;
@@ -72,6 +90,12 @@ public class Vector3f {
         this.x /= valX;
         this.y /= valY;
         this.z /= valZ;
+        return this;
+    }
+    public Vector3f dev(Vector3f valVec) {
+        this.x /= valVec.x;
+        this.y /= valVec.y;
+        this.z /= valVec.z;
         return this;
     }
     //Vector math
