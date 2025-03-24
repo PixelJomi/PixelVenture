@@ -1,4 +1,4 @@
-package de.jonas.engine.io.math;
+package de.jonas.engine.math;
 
 @SuppressWarnings("all") public class Vector3f {
     //Variables
@@ -15,10 +15,23 @@ package de.jonas.engine.io.math;
         this.z = z;
     }
     //Getters
+    public Vector3f get() {
+        return this;
+    }
     public float getX() {return x;}
     public float getY() {return y;}
     public float getZ() {return z;}
     //Setters
+    public void set(float value) {
+        this.x = value;
+        this.y = value;
+        this.z = value;
+    }
+    public void set(float x,float y,float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
     public void setX(float x) {this.x = x;}
     public void setY(float y) {this.y = y;}
     public void setZ(float z) {this.z = z;}

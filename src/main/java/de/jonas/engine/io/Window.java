@@ -1,5 +1,6 @@
 package de.jonas.engine.io;
 
+import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -15,7 +16,7 @@ public class Window {
 
     private long window;
     private String title;
-    private float bgR,bgG,bgB;
+    private Vector3f bgColor = new Vector3f(0f);
 
     public Input input;
 
@@ -120,7 +121,7 @@ public class Window {
         }
 
         //Set the current Clear Color!
-        GL11.glClearColor(bgR, bgG, bgB, 1.0f);
+        GL11.glClearColor(bgColor.getX(), bgColor.getY(), bgColor.getZ(), 1.0f);
 
         //Clear the Color and Depth Buffer!
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -164,10 +165,8 @@ public class Window {
         GLFW.glfwTerminate();
     }
 
-    public void setBackgroundColor(float R,float G,float B) {
-        bgR = R;
-        bgG = G;
-        bgB = B;
+    public void setBackgroundColor(float r,float g,float b) {
+        bgColor.set(r, g, b);
     }
 
     public int getWidth() {

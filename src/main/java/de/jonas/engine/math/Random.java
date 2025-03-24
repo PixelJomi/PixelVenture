@@ -1,4 +1,4 @@
-package de.jonas.engine.utils;
+package de.jonas.engine.math;
 
 import java.math.BigDecimal;
 import java.util.concurrent.ThreadLocalRandom;

@@ -1,4 +1,4 @@
-package de.jonas.game;
+package de.jonas.engine.math;
 
 import java.util.Random;
 
