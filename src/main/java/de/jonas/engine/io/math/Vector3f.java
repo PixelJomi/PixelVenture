@@ -1,51 +1,101 @@
 package de.jonas.engine.io.math;
 
 public class Vector3f {
-    public float x,y,z;
-
-    public Vector3f(float x,float y,float z) {
+    //Variables
+    private float x, y, z;
+    //Constructors
+    public Vector3f(float value) {
+        this.x = value;
+        this.y = value;
+        this.z = value;
+    }
+    public Vector3f(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    public void mult(float multAll) {
-        this.x *= multAll;
-        this.y *= multAll;
-        this.z *= multAll;
+    //Getters
+    public float getX() {return x;}
+    public float getY() {return y;}
+    public float getZ() {return z;}
+    //Setters
+    public void setX(float x) {this.x = x;}
+    public void setY(float y) {this.y = y;}
+    public void setZ(float z) {this.z = z;}
+    //Addition
+    public Vector3f add(float value) {
+        this.x += value;
+        this.y += value;
+        this.z += value;
+        return this;
     }
-    public void mult(float multX,float multY,float multZ) {
-        this.x *= multX;
-        this.y *= multY;
-        this.z *= multZ;
+    public Vector3f add(float valX,float valY, float valZ) {
+        this.x += valX;
+        this.y += valY;
+        this.z += valZ;
+        return this;
     }
-    public void add(float sumAll) {
-        this.x += sumAll;
-        this.y += sumAll;
-        this.z += sumAll;
+    //Subtraction
+    public Vector3f sub(float value) {
+        this.x -= value;
+        this.y -= value;
+        this.z -= value;
+        return this;
     }
-    public void add(float sumX,float sumY,float sumZ) {
-        this.x += sumX;
-        this.y += sumY;
-        this.z += sumZ;
+    public Vector3f sub(float valX,float valY, float valZ) {
+        this.x -= valX;
+        this.y -= valY;
+        this.z -= valZ;
+        return this;
     }
-    public void sub(float subAll) {
-        this.x += subAll;
-        this.y += subAll;
-        this.z += subAll;
+    //Multiplication
+    public Vector3f mult(float value) {
+        this.x *= value;
+        this.y *= value;
+        this.z *= value;
+        return this;
     }
-    public void sub(float subX,float subY,float subZ) {
-        this.x += subX;
-        this.y += subY;
-        this.z += subZ;
+    public Vector3f mult(float valX,float valY, float valZ) {
+        this.x *= valX;
+        this.y *= valY;
+        this.z *= valZ;
+        return this;
     }
-    public void dev(float devAll) {
-        this.x += devAll;
-        this.y += devAll;
-        this.z += devAll;
+    //Division
+    public Vector3f dev(float value) {
+        this.x /= value;
+        this.y /= value;
+        this.z /= value;
+        return this;
     }
-    public void dev(float devX,float devY,float devZ) {
-        this.x += devX;
-        this.y += devY;
-        this.z += devZ;
+    public Vector3f dev(float valX,float valY, float valZ) {
+        this.x /= valX;
+        this.y /= valY;
+        this.z /= valZ;
+        return this;
+    }
+    //Vector math
+    public Vector3f normalize() {
+        float length = length();
+        //If true then output: "this.dev(length)" if false then output: "this"
+        return (length != 0) ? this.dev(length) : this;
+    }
+    public float dotProduct(Vector3f otherVec) {
+        return this.x * otherVec.x + this.y * otherVec.y + this.z * otherVec.z;
+    }
+    public Vector3f crossProduct(Vector3f otherVec) {
+        return new Vector3f(
+                this.y * otherVec.z - this.z * otherVec.y,
+                this.z * otherVec.x - this.x * otherVec.z,
+                this.x * otherVec.y - this.y * otherVec.x
+        );
+    }
+    public float length() {
+        return (float) Math.sqrt(x * x + y * y + z * z);
+    }
+    //Format out (String)
+    @Override
+    public String toString() {
+        return "Vector3f(" + x + ", " + y + ", " + z + ")";
     }
 }
