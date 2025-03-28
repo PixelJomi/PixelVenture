@@ -16,8 +16,8 @@ public class Main implements Runnable{
     public final int WIDTH = 1280, HEIGHT = 760;
 
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-0.5f,0.5f,0.0f)),
-            new Vertex(new Vector3f(0.5f,0.5f,0.0f)),
+            new Vertex(new Vector3f(-1f,0.5f,0.0f)),
+            new Vertex(new Vector3f(1f,0.5f,0.0f)),
             new Vertex(new Vector3f(0.5f,-0.5f,0.0f)),
             new Vertex(new Vector3f(-0.5f,-0.5f,0.0f))
     }, new int[] {
@@ -35,12 +35,13 @@ public class Main implements Runnable{
     }
 
     public void init() {
-        Console.printDebug("Initializing Game!",null);
+        Console.printDebug("Initializing game...",null);
         renderer = new Renderer();
         window = new Window(WIDTH, HEIGHT, "Game");
         window.setBackgroundColor(0, 0.5f, 1.0f);
-        window.create();
+        window.create(1);
         mesh.create();
+        Console.printSucc("Game initialized!",null);
     }
 
     public void run() {
