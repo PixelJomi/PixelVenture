@@ -2,6 +2,7 @@ package de.jonas.game;
 
 import de.jonas.engine.graphics.Mesh;
 import de.jonas.engine.graphics.Renderer;
+import de.jonas.engine.graphics.Shader;
 import de.jonas.engine.graphics.Vertex;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
@@ -13,6 +14,7 @@ public class Main implements Runnable{
     public Thread game;
     public Window window;
     public Renderer renderer;
+    public Shader shader;
     public final int WIDTH = 1280, HEIGHT = 760;
 
     public Mesh mesh = new Mesh(new Vertex[]{
@@ -36,11 +38,13 @@ public class Main implements Runnable{
 
     public void init() {
         Console.printDebug("Initializing game...",null);
-        renderer = new Renderer();
+        shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
+        renderer = new Renderer(shader);
         window = new Window(WIDTH, HEIGHT, "Game");
         window.setBackgroundColor(0, 0.5f, 1.0f);
         window.create(1);
         mesh.create();
+        shader.create();
         Console.printSucc("Game initialized!",null);
     }
 

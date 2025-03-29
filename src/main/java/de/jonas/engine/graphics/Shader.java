@@ -22,14 +22,41 @@ public class Shader {
         GL20.glCompileShader(vertexID);
 
         if (GL20.glGetShaderi(vertexID,GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            Console.printError("Could not compile vertex shader!",vertexID);
+            Console.printError("Could not compile vertex shader! Error: " + GL20.glGetShaderInfoLog(vertexID),vertexID);
             return;
         }
 
-
         fragmentID = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
+        GL20.glShaderSource(fragmentID,fragmentFile);
+        GL20.glCompileShader(fragmentID);
 
+        if (GL20.glGetShaderi(fragmentID,GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+            Console.printError("Could not compile fragment shader! Error: " + GL20.glGetShaderInfoLog(fragmentID),fragmentID);
+            return;
+        }
 
+        GL20.glAttachShader(programID,vertexID);
+        GL20.glAttachShader(programID,fragmentID);
 
+        GL20.glLinkProgram(programID);
+        if (GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
+            Console.printError("Program linking failed! Error: " + GL20.glGetProgramInfoLog(programID),programID);
+            return;
+        }
+
+        GL20.glValidateProgram(programID);
+        if (GL20.glGetProgrami(programID, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+            Console.printError("Program validation failed! Error: " + GL20.glGetProgramInfoLog(programID),programID);
+            return;
+        }
+
+        GL20.glDeleteShader(vertexID);
+        GL20.glDeleteShader(fragmentID);
     }
+
+    public void bind() {GL20.glUseProgram(programID);}
+
+    public void unbind() {GL20.glUseProgram(0);}
+
+    public void destroy() {GL20.glDeleteProgram(programID);}
 }

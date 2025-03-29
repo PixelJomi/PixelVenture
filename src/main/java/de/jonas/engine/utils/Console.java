@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 @SuppressWarnings("unused")  public class Console {
     public static String warnIcon               = " WARN ";
-    public static String errorIcon              = " FAIL ";
+    public static String errorIcon              = " ERRR ";
     public static String debugIcon              = " DEBG ";
     public static String successIcon            = " SUCC ";
     public static String fatalIcon              =   " " +     color.RED_UNDERLINED    + "FATL"   + color.RESET    + " ";
