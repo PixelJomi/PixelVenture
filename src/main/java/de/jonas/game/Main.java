@@ -18,10 +18,10 @@ public class Main implements Runnable{
     public final int WIDTH = 1280, HEIGHT = 760;
 
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-1f,0.5f,0.0f)),
-            new Vertex(new Vector3f(1f,0.5f,0.0f)),
-            new Vertex(new Vector3f(0.5f,-0.5f,0.0f)),
-            new Vertex(new Vector3f(-0.5f,-0.5f,0.0f))
+            new Vertex(new Vector3f(-1f,0.5f,0.0f), new Vector3f(0.0f,0.0f,1.0f)),
+            new Vertex(new Vector3f(1f,0.5f,0.0f), new Vector3f(0.0f,1.0f,0.0f)),
+            new Vertex(new Vector3f(0.5f,-0.5f,0.0f), new Vector3f(1.0f,0.0f,0.0f)),
+            new Vertex(new Vector3f(-0.5f,-0.5f,0.0f), new Vector3f(1.0f,1.0f,1.0f))
     }, new int[] {
             0, 1, 2,
             0, 3, 2
@@ -55,7 +55,7 @@ public class Main implements Runnable{
             render();
             if (Input.isKeyToggledUp(GLFW.GLFW_KEY_F11)) window.setIsFullscreen(!window.isIsFullscreen());
         }
-        window.destroy();
+        close();
     }
 
     private void update() {
@@ -82,7 +82,11 @@ public class Main implements Runnable{
         window.swapBuffers();
     }
 
-    public static void main(String[] args) {
-        new Main().start();
+    private void close() {
+        window.destroy();
+        mesh.destroy();
+        shader.destroy();
     }
+
+    public static void main(String[] args) {new Main().start();}
 }
