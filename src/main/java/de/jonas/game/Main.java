@@ -18,10 +18,10 @@ public class Main implements Runnable{
     public final int WIDTH = 1280, HEIGHT = 760;
 
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-1f,0.5f,0.0f), new Vector3f(0.0f,0.0f,1.0f)),
-            new Vertex(new Vector3f(1f,0.5f,0.0f), new Vector3f(0.0f,1.0f,0.0f)),
-            new Vertex(new Vector3f(0.5f,-0.5f,0.0f), new Vector3f(1.0f,0.0f,0.0f)),
-            new Vertex(new Vector3f(-0.5f,-0.5f,0.0f), new Vector3f(1.0f,1.0f,1.0f))
+            new Vertex(new Vector3f(-1f,1f,0.0f), new Vector3f(0.0f,0.0f,1.0f)),
+            new Vertex(new Vector3f(1f,1f,0.0f), new Vector3f(0.0f,1.0f,0.0f)),
+            new Vertex(new Vector3f(1f,-1f,0.0f), new Vector3f(1.0f,0.0f,0.0f)),
+            new Vertex(new Vector3f(-1f,-1f,0.0f), new Vector3f(1.0f,1.0f,1.0f))
     }, new int[] {
             0, 1, 2,
             0, 3, 2
@@ -63,7 +63,6 @@ public class Main implements Runnable{
     }
 
     private void render() {
-
         dayLightCycleCount++;
         int dayCount = dayLightCycleCount / 4;
         if (dayCount > (dayLightCycleColorRange * 2)) {
@@ -77,7 +76,6 @@ public class Main implements Runnable{
         window.setBackgroundColor(0, 0.5f - dayLightCycleColorOffset / 255.0f, 1.0f - dayLightCycleColorOffset / 255.0f);
 
         renderer.renderMesh(mesh);
-
 
         window.swapBuffers();
     }

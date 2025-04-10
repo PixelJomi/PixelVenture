@@ -2,11 +2,18 @@ package de.jonas.engine.io;
 
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryStack;
+
+import java.io.IOException;
+import java.nio.IntBuffer;
+
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Window {
 
@@ -35,37 +42,26 @@ public class Window {
 
     public void create(int swapInterval) {
         //Try to initialize GLFW if not working return and output fatal Error!
-        Console.printDebug("Initializing GLFW...",null);
         if (!GLFW.glfwInit()) {
             Console.printFatal("GLFW wasn't initialized!",false);
             return;
-        } else {
-            Console.printSucc("GLFW initialized!",true);
         }
 
         //Create a new Input Instance to handle Input!
-        Console.printDebug("Creating input instance...",null);
         input = new Input();
-        Console.printSucc("Input instance created!", true);
-
 
         //Try to create the GLFW window!
-        Console.printDebug("Creating GLFW window...",null);
         window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
         if (window == 0) {
             Console.printFatal("GLFW window wasn't created!",window);
             return;
-        } else {
-            Console.printSucc("GLFW window created!",window);
         }
 
         //Get Monitor Data and store width and height in monitorWidth / monitorHeight!
-        Console.printDebug("Getting monitor data...",null);
         GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
         if (videoMode != null) {
             monitorWidth = videoMode.width();
             monitorHeight = videoMode.height();
-            Console.printSucc("Monitor data acquired!",monitorWidth + " | " + monitorHeight);
         } else {
             Console.printWarn("Could not get videoMode for monitor!",false);
         }
@@ -75,49 +71,32 @@ public class Window {
         windowPosY[0] = (int) (monitorHeight - height) / 2;
 
         //Set the Window pos to the previously calculated pos!
-        Console.printDebug("Setting GLFW window position...",null);
         GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
-        Console.printSucc("Set GLFW window position!",windowPosX[0] + " | " + windowPosY[0]);
 
         //Make the GLFW Content be the created Window!
-        Console.printDebug("Setting GLFW content to current...",null);
         GLFW.glfwMakeContextCurrent(window);
-        Console.printSucc("Set GLFW content to current!",true);
 
         //Enable GL commands on GLFW window!
-        Console.printDebug("Creating GL capabilities...",null);
         GL.createCapabilities();
-        Console.printSucc("Created GL capabilities!",true);
 
         //Enable the DEPTH_TEST for the window!
-        Console.printDebug("Enabling GL_DEPTH_TEST...",null);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        Console.printSucc("Enabled GL_DEPTH_TEST!",true);
 
         //Create Input callbacks!
-        Console.printDebug("Creating input callbacks...",null);
         createCallbacks();
-        Console.printSucc("Created input callbacks!",true);
 
         //Set FPS to V-Sync (60) if val is "1"!
-        Console.printDebug("Setting buffer swap interval...",swapInterval);
         GLFW.glfwSwapInterval(swapInterval);
-        Console.printSucc("Set buffer swap interval!",swapInterval);
 
         //Save the current time in milliseconds!
-        Console.printDebug("Getting time in ms...",null);
         time = System.currentTimeMillis();
-        Console.printSucc("Got time in ms!",time);
 
         //Show the current GLFW window to the USER!
-        Console.printDebug("Trying to show window...",window);
         GLFW.glfwShowWindow(window);
-        Console.printSucc("Window shown!",window);
     }
 
     private void createCallbacks() {
         //Creates a callback for the resizing of the window!
-        Console.printDebug("Configuring resize callback...",null);
         sizeCallback = new GLFWWindowSizeCallback() {
             public void invoke(long window, int newWidth, int newHeight) {
                 if (!isFullscreen) {
@@ -128,25 +107,13 @@ public class Window {
                 isResized = true;
             }
         };
-        Console.printSucc("Configured resize callback!",true);
 
         //Create all other Callbacks from the Input Instance!
-        Console.printDebug("Setting keyboard callback...",null);
         GLFW.glfwSetKeyCallback(window, input.getKeyboardCallback());
-        Console.printSucc("Set keyboard callback!",true);
-        Console.printDebug("Setting mouse move callback...",null);
         GLFW.glfwSetCursorPosCallback(window, input.getMouseMoveCallback());
-        Console.printSucc("Set mouse move callback!",true);
-        Console.printDebug("Setting mouse button callback...",null);
         GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
-        Console.printSucc("Set mouse button callback!",true);
-        Console.printDebug("Setting mouse scroll callback...",null);
         GLFW.glfwSetScrollCallback(window, input.getMouseScrollCallback());
-        Console.printSucc("Set mouse scroll callback!",true);
-        Console.printDebug("Setting resize callback...",null);
         GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
-        Console.printSucc("Set resize callback!",true);
-
     }
 
     public void update() {
@@ -195,8 +162,6 @@ public class Window {
     }
 
     public void destroy() {
-        Console.printDebug("Destroying window...",window);
-
         //Destroys any Data that isn't needed after the windows closes!
         input.destroy();
         sizeCallback.free();
@@ -205,8 +170,6 @@ public class Window {
         GLFW.glfwWindowShouldClose(window);
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
-
-        Console.printSucc("Window was destroyed!",window);
     }
 
     public void setBackgroundColor(float r,float g,float b) {
@@ -228,12 +191,59 @@ public class Window {
         isResized = true;
         if (isFullscreen) {
             GLFW.glfwGetWindowPos(window, windowPosX, windowPosY);
-            GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, monitorWidth, monitorHeight, 0); // LAST ONE IS THE REFRESH RATE!!!!
+            GLFW.glfwSetWindowMonitor(window, getCurrentOverlapMonitor(), 0, 0, monitorWidth, monitorHeight, 0);
         } else {
-            GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0); // LAST ONE IS THE REFRESH RATE!!!!
+            GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
         }
     }
 
+    public long getCurrentOverlapMonitor() {
+        PointerBuffer monitors = GLFW.glfwGetMonitors();
+        if (monitors == null) {
+            Console.printError("No monitors found!",false);
+            return 0;
+        }
 
+        int maxOverlap = 0;
+        long bestMonitor = 0;
+
+        for (int i = 0; i < monitors.capacity(); i++) {
+            long monitor = monitors.get(i);
+
+            GLFWVidMode vidMode = GLFW.glfwGetVideoMode(monitor);
+            if (vidMode == null) {continue;}
+            int monitorWidth = vidMode.width();
+            int monitorHeight = vidMode.height();
+
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer monitorXPos = stack.mallocInt(1);
+                IntBuffer monitorYPos = stack.mallocInt(1);
+                GLFW.glfwGetMonitorPos(monitor, monitorXPos, monitorYPos);
+                int monitorX = monitorXPos.get(0);
+                int monitorY = monitorYPos.get(0);
+                IntBuffer windowXPos = stack.mallocInt(1);
+                IntBuffer windowYPos = stack.mallocInt(1);
+                GLFW.glfwGetWindowPos(window, windowXPos, windowYPos);
+                int windowX = windowXPos.get(0);
+                int windowY = windowYPos.get(0);
+                IntBuffer width = stack.mallocInt(1);
+                IntBuffer height = stack.mallocInt(1);
+                GLFW.glfwGetWindowSize(window, width, height);
+                int windowWidth = width.get(0);
+                int windowHeight = height.get(0);
+
+                int overlapArea = Math.max(0, Math.min(windowX + windowWidth, monitorX + monitorWidth) - Math.max(windowX, monitorX)) *
+                        Math.max(0, Math.min(windowY + windowHeight, monitorY + monitorHeight) - Math.max(windowY, monitorY));
+
+                if (overlapArea > maxOverlap) {
+                    maxOverlap = overlapArea;
+                    bestMonitor = monitor;
+                }
+            } catch (Error e) {
+                Console.printError("Could not get monitor overlap data!",monitor);
+            }
+        }
+        return bestMonitor;
+    }
 }
 

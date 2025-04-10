@@ -8,14 +8,10 @@ import java.io.InputStreamReader;
 public class FileUtils {
     public static String loadAsString(String path) {
         StringBuilder result = new StringBuilder();
-        Console.printDebug("Loading resource: " + FileUtils.class.getResource(path),path);
 
         InputStream resourceStream = FileUtils.class.getResourceAsStream(path);
 
-        if (resourceStream == null) {
-            Console.printError("Resource not found at path: ",path);
-            return "";
-        }
+        if (resourceStream == null) {return "";}
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceStream))) {
             String line = "";
@@ -25,7 +21,6 @@ public class FileUtils {
         } catch (IOException e) {
             Console.printError("Couldn't find the file at: ",path);
         }
-        Console.printSucc("Got FileData!",path);
         return result.toString();
     }
 }

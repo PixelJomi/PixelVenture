@@ -26,7 +26,6 @@ public class Input {
 
     public Input() {
         //Input handler for keyboard presses!
-        Console.printDebug("Configuring keyboard callback...",null);
         keyboard = new GLFWKeyCallback() {
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (key >= 0 && key < keys.length) {
@@ -36,33 +35,26 @@ public class Input {
                 }
             }
         };
-        Console.printSucc("Configured keyboard callback!",true);
         //Input handler for mouse movement.
-        Console.printDebug("Configuring mouse move callback...",null);
         mouseMove = new GLFWCursorPosCallback() {
             public void invoke(long window, double xPos, double yPos) {
                 mouseX = xPos;
                 mouseY = yPos;
             }
         };
-        Console.printSucc("Configured mouse move callback!",true);
         //Input handler for mouse buttons!
-        Console.printDebug("Configuring mouse button callback...",null);
         mouseButtons = new GLFWMouseButtonCallback() {
             public void invoke(long window, int button, int action, int mods) {
                 buttons[button] = (action != GLFW.GLFW_RELEASE);
             }
         };
-        Console.printSucc("Configured mouse button callback!",true);
         //Input handler for mouse scroll!
-        Console.printDebug("Configuring mouse scroll callback...",null);
         mouseScroll = new GLFWScrollCallback() {
             public void invoke(long window, double offsetX, double offsetY) {
                 scrollX += offsetX;
                 scrollY += offsetY;
             }
         };
-        Console.printSucc("Configured mouse scroll callback!",true);
     }
     //Checking if a mouse button is pressed
     public static boolean isButtonDown(int button) {
