@@ -8,6 +8,7 @@ import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
+import de.jonas.game.data.PV10;
 import org.lwjgl.glfw.GLFW;
 
 public class Main implements Runnable{
@@ -18,13 +19,17 @@ public class Main implements Runnable{
     public final int WIDTH = 1280, HEIGHT = 760;
 
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-1f,1f,0.0f), new Vector3f(0.0f,0.0f,1.0f)),
-            new Vertex(new Vector3f(1f,1f,0.0f), new Vector3f(0.0f,1.0f,0.0f)),
-            new Vertex(new Vector3f(1f,-1f,0.0f), new Vector3f(1.0f,0.0f,0.0f)),
-            new Vertex(new Vector3f(-1f,-1f,0.0f), new Vector3f(1.0f,1.0f,1.0f))
+            new Vertex(new Vector3f(-0.5f,1f,0.0f), PV10.DEFAULT_COLOR),
+            new Vertex(new Vector3f(0.5f,1f,0.0f), PV10.DEFAULT_COLOR),
+            new Vertex(new Vector3f(1f,0f,0.0f), PV10.DEFAULT_COLOR),
+            new Vertex(new Vector3f(0.5f,-1f,0.0f), PV10.DEFAULT_COLOR),
+            new Vertex(new Vector3f(-0.5f,-1f,0.0f), PV10.DEFAULT_COLOR),
+            new Vertex(new Vector3f(-1f,0f,0.0f), PV10.DEFAULT_COLOR)
     }, new int[] {
-            0, 1, 2,
-            0, 3, 2
+            0,1,2,
+            0,5,2,
+            5,2,3,
+            5,4,3
     });
 
     private int dayLightCycleCount = 0;
@@ -40,7 +45,7 @@ public class Main implements Runnable{
         Console.printDebug("Initializing game...",null);
         shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
         renderer = new Renderer(shader);
-        window = new Window(WIDTH, HEIGHT, "Game");
+        window = new Window(WIDTH, HEIGHT, PV10.GAME_NAME);
         window.setBackgroundColor(0, 0.5f, 1.0f);
         window.create(1);
         mesh.create();
