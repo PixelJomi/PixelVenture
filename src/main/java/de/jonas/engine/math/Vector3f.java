@@ -18,9 +18,9 @@ package de.jonas.engine.math;
     public Vector3f get() {
         return this;
     }
-    public float getX() {return x;}
-    public float getY() {return y;}
-    public float getZ() {return z;}
+    public float getX() {return this.x;}
+    public float getY() {return this.y;}
+    public float getZ() {return this.z;}
     //Setters
     public void set(float value) {
         this.x = value;
@@ -49,9 +49,9 @@ package de.jonas.engine.math;
         return this;
     }
     public Vector3f add(Vector3f valVec) {
-        this.x += valVec.x;
-        this.y += valVec.y;
-        this.z += valVec.z;
+        this.x += valVec.getX();
+        this.y += valVec.getY();
+        this.z += valVec.getZ();
         return this;
     }
     //Subtraction
@@ -68,9 +68,9 @@ package de.jonas.engine.math;
         return this;
     }
     public Vector3f sub(Vector3f valVec) {
-        this.x -= valVec.x;
-        this.y -= valVec.y;
-        this.z -= valVec.z;
+        this.x -= valVec.getX();
+        this.y -= valVec.getY();
+        this.z -= valVec.getZ();
         return this;
     }
     //Multiplication
@@ -87,9 +87,9 @@ package de.jonas.engine.math;
         return this;
     }
     public Vector3f mult(Vector3f valVec) {
-        this.x *= valVec.x;
-        this.y *= valVec.y;
-        this.z *= valVec.z;
+        this.x *= valVec.getX();
+        this.y *= valVec.getY();
+        this.z *= valVec.getZ();
         return this;
     }
     //Division
@@ -106,9 +106,9 @@ package de.jonas.engine.math;
         return this;
     }
     public Vector3f dev(Vector3f valVec) {
-        this.x /= valVec.x;
-        this.y /= valVec.y;
-        this.z /= valVec.z;
+        this.x /= valVec.getX();
+        this.y /= valVec.getY();
+        this.z /= valVec.getZ();
         return this;
     }
     //Vector math
@@ -118,21 +118,21 @@ package de.jonas.engine.math;
         return (length != 0) ? this.dev(length) : this;
     }
     public float dotProduct(Vector3f otherVec) {
-        return this.x * otherVec.x + this.y * otherVec.y + this.z * otherVec.z;
+        return this.x * otherVec.getX() + this.y * otherVec.getY() + this.z * otherVec.getZ();
     }
     public Vector3f crossProduct(Vector3f otherVec) {
         return new Vector3f(
-                this.y * otherVec.z - this.z * otherVec.y,
-                this.z * otherVec.x - this.x * otherVec.z,
-                this.x * otherVec.y - this.y * otherVec.x
+                this.y * otherVec.getZ() - this.z * otherVec.getY(),
+                this.z * otherVec.getX() - this.x * otherVec.getZ(),
+                this.x * otherVec.getY() - this.y * otherVec.getX()
         );
     }
     public float length() {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+        return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
     //Format out (String)
     @Override
     public String toString() {
-        return "Vector3f(" + x + ", " + y + ", " + z + ")";
+        return "Vector3f(" + this.x + ", " + this.y + ", " + this.z + ")";
     }
 }
