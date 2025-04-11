@@ -13,7 +13,7 @@ public class Mesh {
     //Variables
     private Vertex[] vertices;
     private int[] indices;
-    private int vao, pbo, ibo, cbo; //Vertex Array Object (abo), Position Buffer Object (vbo), Indices Buffer Object (ibo), Color Buffer Object (cbo)
+    private int vao, pbo, ibo, cbo, tbo; //Vertex Array Object (abo), Position Buffer Object (vbo), Indices Buffer Object (ibo), Color Buffer Object (cbo)
     //Constructor
     public Mesh(Vertex[] vertices,int[] indices) {
         this.vertices = vertices;
@@ -46,6 +46,16 @@ public class Mesh {
 
         cbo =  storeData(colorBuffer, 1, 3);
 
+        FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(vertices.length * 3);
+        float[] textureData = new float[vertices.length *3];
+        for (int i = 0; i < vertices.length; i++) {
+            textureData[i * 2] = vertices[i].getTextureCord().getX();
+            textureData[i * 2 + 1] = vertices[i].getTextureCord().getY();
+        }
+        textureBuffer.put(textureData).flip();
+
+        tbo =  storeData(textureBuffer, 2, 2);
+
         IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
         indicesBuffer.put(indices).flip();
 
@@ -68,6 +78,7 @@ public class Mesh {
         GL15.glDeleteBuffers(pbo);
         GL15.glDeleteBuffers(cbo);
         GL15.glDeleteBuffers(ibo);
+        GL15.glDeleteBuffers(tbo);
         GL30.glDeleteVertexArrays(vao);
     }
 
@@ -78,4 +89,5 @@ public class Mesh {
     public int getPBO() {return pbo;}
     public int getIBO() {return ibo;}
     public int getCBO() {return cbo;}
+    public int getTBO() {return tbo;}
 }

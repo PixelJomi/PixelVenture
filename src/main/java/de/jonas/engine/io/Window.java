@@ -122,6 +122,7 @@ public class Window {
             if (isFullscreen) {
                 GL11.glViewport(0, 0, monitorWidth, monitorHeight);
             } else {
+                System.out.println("SETTING");
                 GL11.glViewport(0, 0, width, height);
             }
             isResized = false;
