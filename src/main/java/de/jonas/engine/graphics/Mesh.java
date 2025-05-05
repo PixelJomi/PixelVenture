@@ -1,5 +1,6 @@
 package de.jonas.engine.graphics;
 
+import de.jonas.engine.utils.Console;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -13,14 +14,18 @@ public class Mesh {
     //Variables
     private Vertex[] vertices;
     private int[] indices;
+    private Material material;
     private int vao, pbo, ibo, cbo, tbo; //Vertex Array Object (abo), Position Buffer Object (vbo), Indices Buffer Object (ibo), Color Buffer Object (cbo)
     //Constructor
-    public Mesh(Vertex[] vertices,int[] indices) {
+    public Mesh(Vertex[] vertices,int[] indices, Material material) {
         this.vertices = vertices;
         this.indices = indices;
+        this.material = material;
     }
     //Methods
     public void create() {
+        material.create();
+
         vao = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vao);
 
@@ -46,8 +51,8 @@ public class Mesh {
 
         cbo =  storeData(colorBuffer, 1, 3);
 
-        FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(vertices.length * 3);
-        float[] textureData = new float[vertices.length *3];
+        FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(vertices.length * 2);
+        float[] textureData = new float[vertices.length * 2];
         for (int i = 0; i < vertices.length; i++) {
             textureData[i * 2] = vertices[i].getTextureCord().getX();
             textureData[i * 2 + 1] = vertices[i].getTextureCord().getY();
@@ -80,6 +85,7 @@ public class Mesh {
         GL15.glDeleteBuffers(ibo);
         GL15.glDeleteBuffers(tbo);
         GL30.glDeleteVertexArrays(vao);
+        material.destroy();
     }
 
     //Getters
@@ -90,4 +96,5 @@ public class Mesh {
     public int getIBO() {return ibo;}
     public int getCBO() {return cbo;}
     public int getTBO() {return tbo;}
+    public Material getMaterial() {return material;}
 }

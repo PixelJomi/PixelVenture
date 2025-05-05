@@ -1,11 +1,9 @@
 package de.jonas.game;
 
-import de.jonas.engine.graphics.Mesh;
-import de.jonas.engine.graphics.Renderer;
-import de.jonas.engine.graphics.Shader;
-import de.jonas.engine.graphics.Vertex;
+import de.jonas.engine.graphics.*;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
+import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
 import de.jonas.game.data.PV10;
@@ -19,18 +17,14 @@ public class Main implements Runnable{
     public final int WIDTH = 1280, HEIGHT = 760;
 
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-0.5f,1f,0.0f), PV10.DEFAULT_COLOR),
-            new Vertex(new Vector3f(0.5f,1f,0.0f), PV10.DEFAULT_COLOR),
-            new Vertex(new Vector3f(1f,0f,0.0f), PV10.DEFAULT_COLOR),
-            new Vertex(new Vector3f(0.5f,-1f,0.0f), PV10.DEFAULT_COLOR),
-            new Vertex(new Vector3f(-0.5f,-1f,0.0f), PV10.DEFAULT_COLOR),
-            new Vertex(new Vector3f(-1f,0f,0.0f), PV10.DEFAULT_COLOR)
+            new Vertex(new Vector3f(-0.5f,0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(0.0f,0.0f)),
+            new Vertex(new Vector3f(-0.5f,-0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(0.0f,1.0f)),
+            new Vertex(new Vector3f(0.5f,-0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(1.0f,1.0f)),
+            new Vertex(new Vector3f(0.5f,0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(1.0f,0.0f))
     }, new int[] {
             0,1,2,
-            0,5,2,
-            5,2,3,
-            5,4,3
-    });
+            0,3,2
+    }, new Material("/textures/testPic.png"));
 
     private int dayLightCycleCount = 0;
     @SuppressWarnings("FieldCanBeLocal") private int dayLightCycleColorOffset = 0;
