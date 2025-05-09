@@ -1,5 +1,6 @@
 package de.jonas.engine.io;
 
+import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
 import org.lwjgl.PointerBuffer;
@@ -10,7 +11,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -31,14 +31,21 @@ public class Window {
     private boolean isFullscreen;
     private boolean isResized;
 
+    private Matrix4f projectionMatrix;
+
     public static long time;
     public int frames;
     public int FPS;
+    public float FOV = 70.0f;
+
+    private float cameraNear = 0.1f;
+    private float cameraFar = 1000.0f;
 
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
+        updateProjectionMatrix(width,height);
     }
 
     public void create(int swapInterval) {
@@ -104,6 +111,7 @@ public class Window {
                     //Stores the new width into the current width var.
                     width = newWidth;
                     height = newHeight;
+                    updateProjectionMatrix(newWidth,newHeight);
                 }
                 isResized = true;
             }
@@ -115,6 +123,10 @@ public class Window {
         GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
         GLFW.glfwSetScrollCallback(window, input.getMouseScrollCallback());
         GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
+    }
+
+    private void updateProjectionMatrix(int width, int height) {
+        projectionMatrix = Matrix4f.projection(FOV, (float) width / (float) height,cameraNear, cameraFar);
     }
 
     public void update() {
@@ -176,9 +188,7 @@ public class Window {
         }
     }
 
-    public void setBackgroundColor(float r,float g,float b) {
-        bgColor.set(r, g, b);
-    }
+    public void setBackgroundColor(float r,float g,float b) {bgColor.set(r, g, b);}
 
     public int getWidth() {return width;}
 
@@ -251,5 +261,7 @@ public class Window {
     }
 
     public int getFPS() {return FPS;}
+
+    public Matrix4f getProjectionMatrix() {return projectionMatrix;}
 }
 

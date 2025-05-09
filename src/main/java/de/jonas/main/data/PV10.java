@@ -1,4 +1,4 @@
-package de.jonas.game.data;
+package de.jonas.main.data;
 
 import de.jonas.engine.math.Vector3f;
 

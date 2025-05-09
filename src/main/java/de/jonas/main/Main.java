@@ -1,12 +1,14 @@
-package de.jonas.game;
+package de.jonas.main;
 
 import de.jonas.engine.graphics.*;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
+import de.jonas.engine.objects.Camera;
+import de.jonas.engine.objects.GameObject;
 import de.jonas.engine.utils.Console;
-import de.jonas.game.data.PV10;
+import de.jonas.main.data.PV10;
 import org.lwjgl.glfw.GLFW;
 
 public class Main implements Runnable{
@@ -36,6 +38,10 @@ public class Main implements Runnable{
             0,3,2
     }, new Material("/textures/testPic.png"));
 
+    public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
+
+    public Camera camera = new Camera(new Vector3f(0,0,1),new Vector3f(0,0,0));
+
     public void start() {
         game = new Thread(this, "game");
         game.start();
@@ -43,9 +49,9 @@ public class Main implements Runnable{
 
     public void init() {
         Console.printDebug("Initializing game...",null);
-        shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
-        renderer = new Renderer(shader);
         window = new Window(WIDTH, HEIGHT, PV10.GAME_NAME);
+        shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
+        renderer = new Renderer(window, shader);
         window.setBackgroundColor(0, 0.5f, 1.0f);
         window.create(1);
         mesh.create();
@@ -72,6 +78,7 @@ public class Main implements Runnable{
     }
 
     private void update() {
+
         calcTPS();
         GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + window.getFPS() + " | TPS: " + TPS);
     }
@@ -82,7 +89,7 @@ public class Main implements Runnable{
 
     private void render() {
         window.update();
-        renderer.renderMesh(mesh,(float) Math.sin(gameTime / 100.0f) );
+        renderer.renderGameObject(object, camera);
         window.swapBuffers();
     }
 
