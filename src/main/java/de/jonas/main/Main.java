@@ -78,6 +78,7 @@ public class Main implements Runnable{
     }
 
     private void update() {
+        camera.update();
 
         calcTPS();
         GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + window.getFPS() + " | TPS: " + TPS);

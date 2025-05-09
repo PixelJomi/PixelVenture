@@ -1,9 +1,13 @@
 package de.jonas.engine.math;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Matrix4f {
+    //Variables
     public static final int SIZE = 4;
     private float[] elements = new float[SIZE * SIZE];
-
+    //Matrices
     public static Matrix4f identity() {
         Matrix4f result = new Matrix4f();
         /*
@@ -23,7 +27,6 @@ public class Matrix4f {
 
         return  result;
     }
-
     public static Matrix4f translate(Vector3f translate) {
         Matrix4f result = Matrix4f.identity();
         /*
@@ -38,7 +41,6 @@ public class Matrix4f {
 
         return  result;
     }
-
     public static Matrix4f rotate(float angle,Vector3f axis) {
         Matrix4f result = Matrix4f.identity();
 
@@ -58,7 +60,6 @@ public class Matrix4f {
 
         return  result;
     }
-
     public static Matrix4f scale(Vector3f scalar) {
         Matrix4f result = Matrix4f.identity();
         /*
@@ -73,7 +74,6 @@ public class Matrix4f {
 
         return result;
     }
-
     public static Matrix4f projection(float fov,float aspect, float near, float far) {
         Matrix4f result = Matrix4f.identity();
 
@@ -89,7 +89,6 @@ public class Matrix4f {
 
         return result;
     }
-
     public static Matrix4f view(Vector3f position, Vector3f rotation) {
 
         Vector3f negativePos = new Vector3f(-position.getX(), -position.getY(), -position.getZ());
@@ -102,20 +101,6 @@ public class Matrix4f {
 
         return Matrix4f.multiply(translationMatrix,rotationMatrix);
     }
-
-    public static Matrix4f multiply(Matrix4f matrix, Matrix4f matrix2) {
-        Matrix4f result = Matrix4f.identity();
-
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                result.set(i,j, matrix.get(i,0) * matrix2.get(0,j) + matrix.get(i,1) * matrix2.get(1,j) +
-                                      matrix.get(i,2) * matrix2.get(2,j) + matrix.get(i,3) * matrix2.get(3,j));
-            }
-        }
-
-        return result;
-    }
-
     public static Matrix4f transform(Vector3f position, Vector3f rotation, Vector3f scale) {
         Matrix4f translationMatrix = Matrix4f.translate(position);
         Matrix4f rotationXMatrix = Matrix4f.rotate(rotation.getX(),new Vector3f(1.0f,0.0f,0.0f));
@@ -127,10 +112,33 @@ public class Matrix4f {
 
         return Matrix4f.multiply(translationMatrix,Matrix4f.multiply(rotationMatrix,scaleMatrix));
     }
+    //Math
+    public static Matrix4f multiply(Matrix4f matrix, Matrix4f matrix2) {
+        Matrix4f result = Matrix4f.identity();
 
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                result.set(i,j, matrix.get(i,0) * matrix2.get(0,j) + matrix.get(i,1) * matrix2.get(1,j) +
+                        matrix.get(i,2) * matrix2.get(2,j) + matrix.get(i,3) * matrix2.get(3,j));
+            }
+        }
+
+        return result;
+    }
+    //Getter
     public float get(int x, int y) {return elements[y * SIZE + x];}
-
-    public void set(int x, int y, float value) {elements[y * SIZE + x] = value;}
-
     public float[] getAll() {return elements;}
+    //Setters
+    public void set(int x, int y, float value) {elements[y * SIZE + x] = value;}
+    //Hash map
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Matrix4f matrix4f = (Matrix4f) o;
+        return Objects.deepEquals(elements, matrix4f.elements);
+    }
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(elements);
+    }
 }

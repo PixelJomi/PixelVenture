@@ -1,5 +1,7 @@
 package de.jonas.engine.math;
 
+import java.util.Objects;
+
 @SuppressWarnings("all") public class Vector3f {
     //Variables
     private float x, y, z;
@@ -54,6 +56,9 @@ package de.jonas.engine.math;
         this.z += valVec.getZ();
         return this;
     }
+    public static Vector3f add(Vector3f vector1, Vector3f vector2) {
+        return new Vector3f(vector1.getX() + vector2.getX(),vector1.getY() + vector2.getY(),vector1.getZ() + vector2.getZ());
+    }
     //Subtraction
     public Vector3f sub(float value) {
         this.x -= value;
@@ -72,6 +77,9 @@ package de.jonas.engine.math;
         this.y -= valVec.getY();
         this.z -= valVec.getZ();
         return this;
+    }
+    public static Vector3f sub(Vector3f vector1, Vector3f vector2) {
+        return new Vector3f(vector1.getX() - vector2.getX(),vector1.getY() - vector2.getY(),vector1.getZ() - vector2.getZ());
     }
     //Multiplication
     public Vector3f mult(float value) {
@@ -92,6 +100,9 @@ package de.jonas.engine.math;
         this.z *= valVec.getZ();
         return this;
     }
+    public static Vector3f mult(Vector3f vector1, Vector3f vector2) {
+        return new Vector3f(vector1.getX() * vector2.getX(),vector1.getY() * vector2.getY(),vector1.getZ() * vector2.getZ());
+    }
     //Division
     public Vector3f dev(float value) {
         this.x /= value;
@@ -110,6 +121,9 @@ package de.jonas.engine.math;
         this.y /= valVec.getY();
         this.z /= valVec.getZ();
         return this;
+    }
+    public static Vector3f dev(Vector3f vector1, Vector3f vector2) {
+        return new Vector3f(vector1.getX() / vector2.getX(),vector1.getY() / vector2.getY(),vector1.getZ() / vector2.getZ());
     }
     //Vector math
     public Vector3f normalize() {
@@ -130,9 +144,40 @@ package de.jonas.engine.math;
     public float length() {
         return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
+    public static Vector3f normalize(Vector3f vector) {
+        float length = vector.length();
+        return (length != 0) ? vector.dev(length) : vector;
+    }
+    public static float dotProduct(Vector3f vector1, Vector3f vector2) {
+      return vector1.getX() * vector2.getX() + vector1.getY() * vector2.getY() + vector1.getZ() * vector2.getZ();
+    }
+    public static Vector3f crossProduct(Vector3f vector1, Vector3f vector2) {
+        return new Vector3f(
+                vector1.getY() * vector2.getZ() - vector1.getZ() * vector2.getY(),
+                vector1.getZ() * vector2.getX() - vector1.getX() * vector2.getZ(),
+                vector1.getX() * vector2.getY() - vector1.getY() * vector2.getX()
+        );
+    }
+    public static float length(Vector3f vector) {
+        return (float) Math.sqrt(vector.getX() * vector.getX() + vector.getY() * vector.getY() + vector.getZ() * vector.getZ());
+    }
     //Format out (String)
     @Override
     public String toString() {
         return "Vector3f(" + this.x + ", " + this.y + ", " + this.z + ")";
+    }
+    public static String toString(Vector3f vector) {
+        return "Vector3f(" + vector.getX() + ", " + vector.getY() + ", " + vector.getZ() + ")";
+    }
+    //Hash map
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vector3f vector3f = (Vector3f) o;
+        return Float.compare(x, vector3f.x) == 0 && Float.compare(y, vector3f.y) == 0 && Float.compare(z, vector3f.z) == 0;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
     }
 }

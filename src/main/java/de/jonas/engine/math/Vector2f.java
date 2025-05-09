@@ -1,6 +1,9 @@
 package de.jonas.engine.math;
 
+import java.util.Objects;
+
 public class Vector2f {
+    //Variables
     private float x, y;
     //Constructors
     public Vector2f(float value) {
@@ -44,6 +47,9 @@ public class Vector2f {
         this.y += valVec.getY();
         return this;
     }
+    public static Vector2f add(Vector2f vector1, Vector2f vector2) {
+        return new Vector2f(vector1.getX() + vector2.getX(),vector1.getY() + vector2.getY());
+    }
     //Subtraction
     public Vector2f sub(float value) {
         this.x -= value;
@@ -59,6 +65,9 @@ public class Vector2f {
         this.x -= valVec.getX();
         this.y -= valVec.getY();
         return this;
+    }
+    public static Vector2f sub(Vector2f vector1, Vector2f vector2) {
+        return new Vector2f(vector1.getX() - vector2.getX(),vector1.getY() + vector2.getY());
     }
     //Multiplication
     public Vector2f mult(float value) {
@@ -76,6 +85,9 @@ public class Vector2f {
         this.y *= valVec.getY();
         return this;
     }
+    public static Vector2f mult(Vector2f vector1, Vector2f vector2) {
+        return new Vector2f(vector1.getX() * vector2.getX(),vector1.getY() * vector2.getY());
+    }
     //Division
     public Vector2f dev(float value) {
         this.x /= value;
@@ -91,6 +103,9 @@ public class Vector2f {
         this.x /= valVec.getX();
         this.y /= valVec.getY();
         return this;
+    }
+    public static Vector2f dev(Vector2f vector1, Vector2f vector2) {
+        return new Vector2f(vector1.getX() / vector2.getX(),vector1.getY() / vector2.getY());
     }
     //Vector math
     public Vector2f normalize() {
@@ -110,12 +125,39 @@ public class Vector2f {
     public float length() {
         return (float) Math.sqrt(this.x * this.x + this.y * this.y);
     }
+    public static Vector2f normalize(Vector2f vector) {
+        float length = vector.length();
+        return (length != 0) ? vector.dev(length) : vector;
+    }
+    public static float dotProduct(Vector2f vector1, Vector2f vector2) {
+        return vector1.getX() * vector2.getX() + vector1.getY() * vector2.getY();
+    }
+    public static Vector2f crossProduct(Vector2f vector1, Vector2f vector2) {
+        return new Vector2f(
+                vector1.getX() * vector2.getY() - vector1.getY() * vector2.getX(),
+                vector1.getY() * vector2.getX() - vector1.getX() * vector2.getY()
+        );
+    }
+    public static float length(Vector2f vector) {
+        return (float) Math.sqrt(vector.getX() * vector.getX() + vector.getY() * vector.getY());
+    }
     //Format out (String)
     @Override
     public String toString() {
         return "Vector2f(" + this.x + ", " + this.y + ")";
     }
-
-
-
+    public static String toString(Vector2f vector) {
+        return "Vector2f(" + vector.getX() + ", " + vector.getY() + ")";
+    }
+    //Hash map
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vector2f vector2f = (Vector2f) o;
+        return Float.compare(x, vector2f.x) == 0 && Float.compare(y, vector2f.y) == 0;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 }
