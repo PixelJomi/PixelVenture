@@ -33,6 +33,7 @@ public class Window {
 
     public static long time;
     public int frames;
+    public int FPS;
 
     public Window(int width, int height, String title) {
         this.width = width;
@@ -137,18 +138,7 @@ public class Window {
         //GLFW.glfwWaitEvents();
         GLFW.glfwPollEvents();
 
-        //Increments the frames value by one!
-        frames++;
-
-        //Calls every second!
-        if (System.currentTimeMillis() > time + 1000) {
-            //Sets the Window title to be title + FPS: + frames
-            GLFW.glfwSetWindowTitle(window, title + " | FPS: " + frames);
-            //Updates the Time var to the current time in milliseconds!
-            time = System.currentTimeMillis();
-            //Sets the Frames back to zero!
-            frames = 0;
-        }
+        calcFrames();
     }
 
     public void swapBuffers() {
@@ -170,6 +160,20 @@ public class Window {
         GLFW.glfwWindowShouldClose(window);
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
+    }
+
+    private void calcFrames() {
+        //Increments the frames value by one!
+        frames++;
+
+        //Calls every second!
+        if (System.currentTimeMillis() > time + 1000) {
+            //Updates the Time var to the current time in milliseconds!
+            time = System.currentTimeMillis();
+            FPS = frames;
+            //Sets the Frames back to zero!
+            frames = 0;
+        }
     }
 
     public void setBackgroundColor(float r,float g,float b) {
@@ -245,5 +249,7 @@ public class Window {
         }
         return bestMonitor;
     }
+
+    public int getFPS() {return FPS;}
 }
 

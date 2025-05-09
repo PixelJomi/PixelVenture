@@ -16,6 +16,16 @@ public class Main implements Runnable{
     public Shader shader;
     public final int WIDTH = 1280, HEIGHT = 760;
 
+    public double tDELTA = 0;
+    public double tLAST_UPDATE = 0;
+    public double tACCUMULATOR = 0;
+    public double tSLICE = 0.05;
+    public int ticks = 0;
+    public int TPS = 0;
+    public long time = 0;
+
+    public int gameTime = 0;
+
     public Mesh mesh = new Mesh(new Vertex[]{
             new Vertex(new Vector3f(-0.5f,0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(0.0f,0.0f)),
             new Vertex(new Vector3f(-0.5f,-0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(0.0f,1.0f)),
@@ -25,10 +35,6 @@ public class Main implements Runnable{
             0,1,2,
             0,3,2
     }, new Material("/textures/testPic.png"));
-
-    private int dayLightCycleCount = 0;
-    @SuppressWarnings("FieldCanBeLocal") private int dayLightCycleColorOffset = 0;
-    @SuppressWarnings("FieldCanBeLocal") private final int dayLightCycleColorRange = 220;
 
     public void start() {
         game = new Thread(this, "game");
@@ -50,33 +56,43 @@ public class Main implements Runnable{
     public void run() {
         init();
         while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
-            update();
+            tDELTA = GLFW.glfwGetTime() - tLAST_UPDATE;
+            tLAST_UPDATE += tDELTA;
+            tACCUMULATOR += tDELTA;
+            while (tACCUMULATOR > tSLICE) {
+                if (gameTime >= 24000) {gameTime = 0;}
+                checkInput();
+                update();
+                tACCUMULATOR -= tSLICE;
+                gameTime += 1;
+            }
             render();
-            if (Input.isKeyToggledUp(GLFW.GLFW_KEY_F11)) window.setIsFullscreen(!window.isIsFullscreen());
         }
         close();
     }
 
     private void update() {
-        window.update();
+        calcTPS();
+        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + window.getFPS() + " | TPS: " + TPS);
+    }
+
+    private void checkInput() {
+        if (Input.isKeyToggledUp(GLFW.GLFW_KEY_F11)) window.setIsFullscreen(!window.isIsFullscreen());
     }
 
     private void render() {
-        dayLightCycleCount++;
-        int dayCount = dayLightCycleCount / 4;
-        if (dayCount > (dayLightCycleColorRange * 2)) {
-            dayLightCycleCount = 0;
-        }
-        if (dayCount > dayLightCycleColorRange) {
-            dayLightCycleColorOffset = (dayCount - (dayCount - dayLightCycleColorRange) * 2);
-        } else {
-            dayLightCycleColorOffset = dayCount;
-        }
-        window.setBackgroundColor(0, 0.5f - dayLightCycleColorOffset / 255.0f, 1.0f - dayLightCycleColorOffset / 255.0f);
-
-        renderer.renderMesh(mesh);
-
+        window.update();
+        renderer.renderMesh(mesh,(float) Math.sin(gameTime / 100.0f) );
         window.swapBuffers();
+    }
+
+    private void calcTPS() {
+        ticks++;
+        if (System.currentTimeMillis() > time + 1000) {
+            time = System.currentTimeMillis();
+            TPS = ticks;
+            ticks = 0;
+        }
     }
 
     private void close() {
