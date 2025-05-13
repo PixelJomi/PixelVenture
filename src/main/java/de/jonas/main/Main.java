@@ -9,6 +9,7 @@ import de.jonas.engine.objects.Camera;
 import de.jonas.engine.objects.GameObject;
 import de.jonas.engine.utils.Console;
 import de.jonas.main.data.PV10;
+import de.jonas.main.data.UserData;
 import org.lwjgl.glfw.GLFW;
 
 public class Main implements Runnable{
@@ -18,10 +19,12 @@ public class Main implements Runnable{
     public Shader shader;
     public final int WIDTH = 1280, HEIGHT = 760;
 
+
     public double tDELTA = 0;
     public double tLAST_UPDATE = 0;
     public double tACCUMULATOR = 0;
     public double tSLICE = 0.05;
+    public double tNOW = 0;
     public int ticks = 0;
     public int TPS = 0;
     public long time = 0;
@@ -48,31 +51,41 @@ public class Main implements Runnable{
     }
 
     public void init() {
+        Console.printDebug("Initializing values...",null);
+        UserData.loadData();
+        Console.printSucc("Values initialized!",null);
         Console.printDebug("Initializing game...",null);
         window = new Window(WIDTH, HEIGHT, PV10.GAME_NAME);
         shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
         renderer = new Renderer(window, shader);
-        window.setBackgroundColor(0, 0.5f, 1.0f);
-        window.create(1);
+        //window.setBackgroundColor(0, 0.5f, 1.0f);
+
+        //bedingung ? wert_wenn_wahr : wert_wenn_falsch
+        window.create(UserData.VSYNC ? 1 : 0);
+
         mesh.create();
         shader.create();
+
         Console.printSucc("Game initialized!",null);
     }
 
     public void run() {
         init();
         while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
-            tDELTA = GLFW.glfwGetTime() - tLAST_UPDATE;
+            tNOW = GLFW.glfwGetTime();
+            tDELTA = tNOW - tLAST_UPDATE;
             tLAST_UPDATE += tDELTA;
             tACCUMULATOR += tDELTA;
+
+            checkInput();
             while (tACCUMULATOR > tSLICE) {
                 if (gameTime >= 24000) {gameTime = 0;}
-                checkInput();
                 update();
                 tACCUMULATOR -= tSLICE;
                 gameTime += 1;
             }
             render();
+            if (!UserData.VSYNC) {window.sync(tNOW,UserData.FPS);}
         }
         close();
     }
@@ -81,7 +94,7 @@ public class Main implements Runnable{
         camera.update();
 
         calcTPS();
-        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + window.getFPS() + " | TPS: " + TPS);
+        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + window.getCURRENT_FPS() + " | TPS: " + TPS);
     }
 
     private void checkInput() {

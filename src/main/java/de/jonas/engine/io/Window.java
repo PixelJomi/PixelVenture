@@ -3,6 +3,7 @@ package de.jonas.engine.io;
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
+import de.jonas.main.data.UserData;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -35,8 +36,7 @@ public class Window {
 
     public static long time;
     public int frames;
-    public int FPS;
-    public float FOV = 70.0f;
+    public int CURRENT_FPS;
 
     private float cameraNear = 0.1f;
     private float cameraFar = 1000.0f;
@@ -126,7 +126,7 @@ public class Window {
     }
 
     private void updateProjectionMatrix(int width, int height) {
-        projectionMatrix = Matrix4f.projection(FOV, (float) width / (float) height,cameraNear, cameraFar);
+        projectionMatrix = Matrix4f.projection(UserData.FOV, (float) width / (float) height,cameraNear, cameraFar);
     }
 
     public void update() {
@@ -174,6 +174,16 @@ public class Window {
         GLFW.glfwTerminate();
     }
 
+    public void sync(double loopStartTime, int fps) {
+        float loopSlot = 1.0f / fps;
+        double endTime = loopStartTime + loopSlot;
+        while(GLFW.glfwGetTime() < endTime) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ie) {}
+        }
+    }
+
     private void calcFrames() {
         //Increments the frames value by one!
         frames++;
@@ -182,7 +192,7 @@ public class Window {
         if (System.currentTimeMillis() > time + 1000) {
             //Updates the Time var to the current time in milliseconds!
             time = System.currentTimeMillis();
-            FPS = frames;
+            CURRENT_FPS = frames;
             //Sets the Frames back to zero!
             frames = 0;
         }
@@ -260,7 +270,7 @@ public class Window {
         return bestMonitor;
     }
 
-    public int getFPS() {return FPS;}
+    public int getCURRENT_FPS() {return CURRENT_FPS;}
 
     public Matrix4f getProjectionMatrix() {return projectionMatrix;}
 }

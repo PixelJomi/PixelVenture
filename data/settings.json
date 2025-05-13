@@ -1,0 +1,11 @@
+{
+  "client":{
+    "vsync":false,
+    "fps":120,
+    "render_distance":5,
+    "fov":90.0
+  },
+  "dev":{
+    "debug":true
+  }
+}
