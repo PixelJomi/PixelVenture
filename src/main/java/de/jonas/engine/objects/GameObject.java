@@ -18,12 +18,6 @@ public class GameObject {
 
     public  void update() {
 
-        temp += 0.02;
-        position.setX((float) Math.sin(temp));
-        rotation.set((float) Math.sin(temp) * 360,(float) Math.sin(temp) * 360,(float) Math.sin(temp) * 360);
-        scale.set((float) Math.sin(temp),(float) Math.sin(temp),(float) Math.sin(temp));
-
-        //position.sub(0,0,0.05f);
     }
 
     public Vector3f getPosition() {return position;}

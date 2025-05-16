@@ -1,9 +1,19 @@
 {
   "client":{
-    "vsync":false,
-    "fps":120,
-    "render_distance":5,
-    "fov":90.0
+    "window": {
+      "vsync":true,
+      "startWidth":1280,
+      "startHeight":760
+    },
+    "render": {
+      "camera": {
+        "cameraNear": 0.1,
+        "cameraFar": 1000.0,
+        "fov":90.0
+      },
+      "fps":120,
+      "render_distance":5
+    }
   },
   "dev":{
     "debug":true

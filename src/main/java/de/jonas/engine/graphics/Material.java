@@ -16,9 +16,7 @@ public class Material {
     private float width, height;
     private int textureID;
 
-    public Material(String path) {
-        this.path = path;
-    }
+    public Material(String path) {this.path = path;}
 
     public void create() {
         try (MemoryStack stack = MemoryStack.stackPush();

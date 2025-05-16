@@ -79,7 +79,6 @@ public class JSONUtils {
     }
 
     public static boolean objectToBoolean(Object object, boolean defaultValue) {
-        boolean result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -93,7 +92,6 @@ public class JSONUtils {
     }
 
     public static int objectToInteger(Object object, int defaultValue) {
-        int result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -107,7 +105,6 @@ public class JSONUtils {
     }
 
     public static long objectToLong(Object object, long defaultValue) {
-        long result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -121,7 +118,6 @@ public class JSONUtils {
     }
 
     public static String objectToString(Object object, String defaultValue) {
-        String result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -135,7 +131,6 @@ public class JSONUtils {
     }
 
     public static double objectToDouble(Object object, double defaultValue) {
-        double result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -149,7 +144,6 @@ public class JSONUtils {
     }
 
     public static JSONObject objectToJSONObject(Object object, JSONObject defaultValue) {
-        JSONObject result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -163,7 +157,6 @@ public class JSONUtils {
     }
 
     public static JSONArray objectToJSONObject(Object object, JSONArray defaultValue) {
-        JSONArray result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -177,7 +170,6 @@ public class JSONUtils {
     }
 
     public static float objectToFloat(Object object, float defaultValue) {
-        float result;
         if (object == null) {
             return defaultValue;
         } else {
@@ -189,4 +181,5 @@ public class JSONUtils {
             }
         }
     }
+
 }

@@ -3,7 +3,9 @@ package de.jonas.engine.io;
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
-import de.jonas.main.data.UserData;
+import de.jonas.engine.data.PVData;
+import de.jonas.engine.data.RunningData;
+import de.jonas.engine.data.UserData;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -17,59 +19,60 @@ import java.nio.IntBuffer;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Window {
+    private long window;
+    private GLFWWindowSizeCallback sizeCallback;
 
-    private int width, height;
     private int monitorWidth,monitorHeight;
+    private int width, height;
+    private String title;
+
     private int[] windowPosX = new int[1],windowPosY = new int[1];
 
-    private long window;
-    private String title;
-    private Vector3f bgColor = new Vector3f(0f);
-
-    public Input input;
-
-    private GLFWWindowSizeCallback sizeCallback;
+    private Vector3f backgroundColor = PVData.DEFAULT_BACKGROUND_COLOR;
+    private Matrix4f projectionMatrix;
     private boolean isFullscreen;
     private boolean isResized;
 
-    private Matrix4f projectionMatrix;
-
-    public static long time;
-    public int frames;
-    public int CURRENT_FPS;
-
-    private float cameraNear = 0.1f;
-    private float cameraFar = 1000.0f;
+    public Input input;
 
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
-        updateProjectionMatrix(width,height);
+        updateProjectionMatrix();
     }
 
     public void create(int swapInterval) {
+        Console.printDebug("Creating Window Class...",null);
         //Try to initialize GLFW if not working return and output fatal Error!
+        Console.printDebug("Initializing GLFW...",null);
         if (!GLFW.glfwInit()) {
             Console.printFatal("GLFW wasn't initialized!",false);
             return;
         }
+        Console.printSucc("GLFW successfully initialized!",true);
 
         //Create a new Input Instance to handle Input!
+        Console.printDebug("Creating Input instance...",null);
         input = new Input();
+        Console.printSucc("Successfully created Input instance!",true);
 
         //Try to create the GLFW window!
+        Console.printDebug("Creating window handle...",null);
         window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
         if (window == 0) {
             Console.printFatal("GLFW window wasn't created!",window);
             return;
         }
+        Console.printSucc("Window handle created!",window);
 
         //Get Monitor Data and store width and height in monitorWidth / monitorHeight!
+        Console.printDebug("Getting videoMode for monitor...",null);
         GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
         if (videoMode != null) {
             monitorWidth = videoMode.width();
             monitorHeight = videoMode.height();
+            Console.printSucc("Successfully got videoMode for monitor!",monitorWidth + "|" + monitorHeight);
         } else {
             Console.printWarn("Could not get videoMode for monitor!",false);
         }
@@ -79,29 +82,45 @@ public class Window {
         windowPosY[0] = (int) (monitorHeight - height) / 2;
 
         //Set the Window pos to the previously calculated pos!
+        Console.printDebug("Setting window position to the middle of the screen...",windowPosX[0] + "|" + windowPosY[0]);
         GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
+        Console.printSucc("Set window position to the middle of the screen!",windowPosX[0] + "|" + windowPosY[0]);
 
         //Make the GLFW Content be the created Window!
+        Console.printDebug("Setting the GLFW Context to created window...",window);
         GLFW.glfwMakeContextCurrent(window);
+        Console.printSucc("Set the GLFW Context to created window!",window);
 
         //Enable GL commands on GLFW window!
+        Console.printDebug("Enabling OpenGL commands on GLFW window...",window);
         GL.createCapabilities();
+        Console.printSucc("Enabled OpenGL commands on GLFW window!",window);
 
         //Enable the DEPTH_TEST for the window!
+        Console.printDebug("Enabling DEPTH_TEST...",GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        Console.printSucc("Enabled DEPTH_TEST!",GL11.GL_DEPTH_TEST);
+        //Enable the CULL_FACE for the window!
+        Console.printDebug("Enabling CULL_FACE...",GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        Console.printSucc("Enabled CULL_FACE!",GL11.GL_CULL_FACE);
 
         //Create Input callbacks!
+        Console.printDebug("Creating callbacks...",null);
         createCallbacks();
+        Console.printSucc("Callbacks created!",true);
 
         //Set FPS to V-Sync (60) if val is "1"!
+        Console.printDebug("Setting the Buffer swap interval...",swapInterval);
         GLFW.glfwSwapInterval(swapInterval);
-
-        //Save the current time in milliseconds!
-        time = System.currentTimeMillis();
+        Console.printSucc("Set the Buffer swap interval!",swapInterval);
 
         //Show the current GLFW window to the USER!
+        Console.printDebug("Setting window to show on screen...",window);
         GLFW.glfwShowWindow(window);
+        Console.printSucc("Window Class successfully created!",true);
     }
+
 
     private void createCallbacks() {
         //Creates a callback for the resizing of the window!
@@ -111,7 +130,7 @@ public class Window {
                     //Stores the new width into the current width var.
                     width = newWidth;
                     height = newHeight;
-                    updateProjectionMatrix(newWidth,newHeight);
+                    updateProjectionMatrix();
                 }
                 isResized = true;
             }
@@ -125,12 +144,13 @@ public class Window {
         GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
     }
 
-    private void updateProjectionMatrix(int width, int height) {
-        projectionMatrix = Matrix4f.projection(UserData.FOV, (float) width / (float) height,cameraNear, cameraFar);
+    private void updateProjectionMatrix() {
+        projectionMatrix = Matrix4f.projection(UserData.FOV, (float) width / (float) height,UserData.CAMERA_NEAR, UserData.CAMERA_FAR);
     }
 
     public void update() {
         //Update the GL11 Viewport if the window is Resized!
+        updateProjectionMatrix();
         if (isResized) {
             if (isFullscreen) {
                 GL11.glViewport(0, 0, monitorWidth, monitorHeight);
@@ -141,7 +161,7 @@ public class Window {
         }
 
         //Set the current Clear Color!
-        GL11.glClearColor(bgColor.getX(), bgColor.getY(), bgColor.getZ(), 1.0f);
+        GL11.glClearColor(backgroundColor.getX(), backgroundColor.getY(), backgroundColor.getZ(), 1.0f);
 
         //Clear the Color and Depth Buffer!
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -149,8 +169,6 @@ public class Window {
         //Processes events that it already happened and does not wait! Other Option could be waitig
         //GLFW.glfwWaitEvents();
         GLFW.glfwPollEvents();
-
-        calcFrames();
     }
 
     public void swapBuffers() {
@@ -184,21 +202,9 @@ public class Window {
         }
     }
 
-    private void calcFrames() {
-        //Increments the frames value by one!
-        frames++;
+    public void setBackgroundColor(float r,float g,float b) {backgroundColor.set(r, g, b);}
 
-        //Calls every second!
-        if (System.currentTimeMillis() > time + 1000) {
-            //Updates the Time var to the current time in milliseconds!
-            time = System.currentTimeMillis();
-            CURRENT_FPS = frames;
-            //Sets the Frames back to zero!
-            frames = 0;
-        }
-    }
-
-    public void setBackgroundColor(float r,float g,float b) {bgColor.set(r, g, b);}
+    public Vector3f getBackgroundColor() {return backgroundColor;}
 
     public int getWidth() {return width;}
 
@@ -270,7 +276,7 @@ public class Window {
         return bestMonitor;
     }
 
-    public int getCURRENT_FPS() {return CURRENT_FPS;}
+    public int getCURRENT_FPS() {return RunningData.CURRENT_FPS;}
 
     public Matrix4f getProjectionMatrix() {return projectionMatrix;}
 }

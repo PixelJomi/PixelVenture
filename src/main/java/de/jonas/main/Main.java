@@ -8,8 +8,10 @@ import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.objects.Camera;
 import de.jonas.engine.objects.GameObject;
 import de.jonas.engine.utils.Console;
-import de.jonas.main.data.PV10;
-import de.jonas.main.data.UserData;
+import de.jonas.engine.utils.PerformanceUtils;
+import de.jonas.engine.data.PVData;
+import de.jonas.engine.data.RunningData;
+import de.jonas.engine.data.UserData;
 import org.lwjgl.glfw.GLFW;
 
 public class Main implements Runnable{
@@ -17,28 +19,32 @@ public class Main implements Runnable{
     public Window window;
     public Renderer renderer;
     public Shader shader;
-    public final int WIDTH = 1280, HEIGHT = 760;
 
-
+    //Variables for TPS!
     public double tDELTA = 0;
     public double tLAST_UPDATE = 0;
     public double tACCUMULATOR = 0;
     public double tSLICE = 0.05;
     public double tNOW = 0;
-    public int ticks = 0;
-    public int TPS = 0;
-    public long time = 0;
-
-    public int gameTime = 0;
 
     public Mesh mesh = new Mesh(new Vertex[]{
-            new Vertex(new Vector3f(-0.5f,0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(0.0f,0.0f)),
-            new Vertex(new Vector3f(-0.5f,-0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(0.0f,1.0f)),
-            new Vertex(new Vector3f(0.5f,-0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(1.0f,1.0f)),
-            new Vertex(new Vector3f(0.5f,0.5f,0.0f), PV10.DEFAULT_COLOR, new Vector2f(1.0f,0.0f))
+            //FRONT
+            new Vertex(new Vector3f(-0.5f,0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,0.0f)),
+            new Vertex(new Vector3f(-0.5f,-0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,1.0f)),
+            new Vertex(new Vector3f(0.5f,-0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,1.0f)),
+            new Vertex(new Vector3f(0.5f,0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,0.0f)),
+
+            new Vertex(new Vector3f(-0.5f,0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,0.0f)),
+            new Vertex(new Vector3f(-0.5f,-0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,1.0f)),
+            new Vertex(new Vector3f(0.5f,-0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,1.0f)),
+            new Vertex(new Vector3f(0.5f,0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,0.0f))
     }, new int[] {
+            //FRONT
             0,1,2,
-            0,3,2
+            0,2,3,
+            //BACK
+            6,5,4,
+            7,6,4
     }, new Material("/textures/testPic.png"));
 
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
@@ -51,14 +57,11 @@ public class Main implements Runnable{
     }
 
     public void init() {
-        Console.printDebug("Initializing values...",null);
         UserData.loadData();
-        Console.printSucc("Values initialized!",null);
         Console.printDebug("Initializing game...",null);
-        window = new Window(WIDTH, HEIGHT, PV10.GAME_NAME);
+        window = new Window(UserData.START_WIDTH, UserData.START_HEIGHT, PVData.GAME_NAME);
         shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
         renderer = new Renderer(window, shader);
-        //window.setBackgroundColor(0, 0.5f, 1.0f);
 
         //bedingung ? wert_wenn_wahr : wert_wenn_falsch
         window.create(UserData.VSYNC ? 1 : 0);
@@ -78,23 +81,29 @@ public class Main implements Runnable{
             tACCUMULATOR += tDELTA;
 
             checkInput();
+
             while (tACCUMULATOR > tSLICE) {
-                if (gameTime >= 24000) {gameTime = 0;}
+                if (RunningData.GAME_TIME >= 24000) {RunningData.GAME_TIME = 0;}
+
                 update();
+
                 tACCUMULATOR -= tSLICE;
-                gameTime += 1;
+                RunningData.GAME_TIME += 1;
             }
+
             render();
-            if (!UserData.VSYNC) {window.sync(tNOW,UserData.FPS);}
+
+            if (!UserData.VSYNC && UserData.FPS > 0) {window.sync(tNOW,UserData.FPS);}
         }
         close();
     }
 
     private void update() {
+        PerformanceUtils.updateTPS();
+
         camera.update();
 
-        calcTPS();
-        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + window.getCURRENT_FPS() + " | TPS: " + TPS);
+        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + RunningData.CURRENT_FPS + " | TPS: " + RunningData.CURRENT_TPS);
     }
 
     private void checkInput() {
@@ -102,18 +111,14 @@ public class Main implements Runnable{
     }
 
     private void render() {
+        PerformanceUtils.updateFPS();
         window.update();
-        renderer.renderGameObject(object, camera);
-        window.swapBuffers();
-    }
 
-    private void calcTPS() {
-        ticks++;
-        if (System.currentTimeMillis() > time + 1000) {
-            time = System.currentTimeMillis();
-            TPS = ticks;
-            ticks = 0;
-        }
+
+        renderer.renderGameObject(object, camera);
+
+
+        window.swapBuffers();
     }
 
     private void close() {
@@ -123,4 +128,5 @@ public class Main implements Runnable{
     }
 
     public static void main(String[] args) {new Main().start();}
+
 }

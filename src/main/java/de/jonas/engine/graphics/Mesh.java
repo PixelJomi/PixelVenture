@@ -15,7 +15,12 @@ public class Mesh {
     private Vertex[] vertices;
     private int[] indices;
     private Material material;
-    private int vao, pbo, ibo, cbo, tbo; //Vertex Array Object (abo), Position Buffer Object (vbo), Indices Buffer Object (ibo), Color Buffer Object (cbo)
+    private int vao, pbo, ibo, cbo, tbo;
+    //Vertex Array Object (vao),
+    //Position Buffer Object (vbo),
+    //Indices Buffer Object (ibo),
+    //Color Buffer Object (cbo)
+
     //Constructor
     public Mesh(Vertex[] vertices,int[] indices, Material material) {
         this.vertices = vertices;

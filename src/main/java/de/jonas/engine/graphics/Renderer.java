@@ -37,8 +37,6 @@ public class Renderer {
         GL30.glDisableVertexAttribArray(1);
         GL30.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
-
-
     }
 
 }
