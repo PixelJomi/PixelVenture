@@ -66,6 +66,11 @@ public class Main implements Runnable{
         //bedingung ? wert_wenn_wahr : wert_wenn_falsch
         window.create(UserData.VSYNC ? 1 : 0);
 
+        //TODO Fix this shity thing
+        // - Add a automatic loading / creating thing....
+        //FIXME Fix this shity thing
+        // - Add a automatic loading / creating thing....
+
         mesh.create();
         shader.create();
 

@@ -104,6 +104,10 @@ public class Window {
         Console.printDebug("Enabling CULL_FACE...",GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_CULL_FACE);
         Console.printSucc("Enabled CULL_FACE!",GL11.GL_CULL_FACE);
+        //Enable the GL_BLEND for the window!
+        Console.printDebug("Enabling GL_BLEND...",GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_BLEND);
+        Console.printSucc("Enabled GL_BLEND!",GL11.GL_BLEND);
 
         //Create Input callbacks!
         Console.printDebug("Creating callbacks...",null);
