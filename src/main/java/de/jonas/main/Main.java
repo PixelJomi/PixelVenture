@@ -45,7 +45,7 @@ public class Main implements Runnable{
             //BACK
             6,5,4,
             7,6,4
-    }, new Material("/textures/testPic.png"));
+    }, new Material("textures/testPic.png"));
 
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
 
@@ -60,17 +60,16 @@ public class Main implements Runnable{
         UserData.loadData();
         Console.printDebug("Initializing game...",null);
         window = new Window(UserData.START_WIDTH, UserData.START_HEIGHT, PVData.GAME_NAME);
-        shader = new Shader("/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
+        shader = new Shader("shader/mainVertex.glsl", "shader/mainFragment.glsl");
         renderer = new Renderer(window, shader);
 
         //bedingung ? wert_wenn_wahr : wert_wenn_falsch
         window.create(UserData.VSYNC ? 1 : 0);
 
-        //TODO Fix this shity thing
+        //TODO Fix this shitty thing
         // - Add a automatic loading / creating thing....
-        //FIXME Fix this shity thing
+        //FIXME Fix this shitty thing
         // - Add a automatic loading / creating thing....
-
         mesh.create();
         shader.create();
 

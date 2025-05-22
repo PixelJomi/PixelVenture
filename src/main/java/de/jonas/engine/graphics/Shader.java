@@ -10,14 +10,15 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
+import java.nio.charset.Charset;
 
 public class Shader {
     private String vertexFile,fragmentFile;
     private int vertexID,fragmentID,programID;
 
     public Shader(String vertexPath, String fragmentPath) {
-        vertexFile = FileUtils.loadAsString(vertexPath);
-        fragmentFile = FileUtils.loadAsString(fragmentPath);
+        vertexFile = FileUtils.loadAsString(vertexPath, Charset.defaultCharset());
+        fragmentFile = FileUtils.loadAsString(fragmentPath, Charset.defaultCharset());
     }
 
     public void create() {
