@@ -1,7 +1,7 @@
 {
   "client":{
     "window": {
-      "vsync":true,
+      "vsync":false,
       "startWidth":1280,
       "startHeight":760
     },
