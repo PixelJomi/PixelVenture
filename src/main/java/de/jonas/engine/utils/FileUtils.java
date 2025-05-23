@@ -10,17 +10,6 @@ import java.nio.file.Paths;
 public class FileUtils {
     public static String loadAsString(String pathString) {
         return loadAsString(pathString,Charset.defaultCharset());
-        //boolean = 8
-        //byte = 8
-
-        //char = 16
-        //short = 16
-
-        //int = 32
-        //float = 32
-
-        //long = 64
-        //double = 64
     }
 
     public static String loadAsString(Path path) {
