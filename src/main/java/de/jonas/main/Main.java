@@ -89,6 +89,7 @@ public class Main implements Runnable{
             //Bottom face
             20, 21, 23,
             23, 21, 22
+            //TODO Add default material!
     }, new Material("textures/testPic.png"));
 
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
