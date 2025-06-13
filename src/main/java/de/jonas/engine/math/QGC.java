@@ -1,20 +1,39 @@
 package de.jonas.engine.math;
 
+import java.math.BigDecimal;
+import java.util.concurrent.ThreadLocalRandom;
+
+/**
+ * Implements a Quadratic Congruential Generator (QCG) for generating pseudorandom numbers.
+ * A QCG is a type of pseudorandom number generator (PRNG) that calculates the next number
+ * in a sequence using a quadratic formula: X<sub>n+1</sub> = (d * X<sub>n</sub><sup>2</sup> + a * X<sub>n</sub> + c) mod m.
+ * This class allows for customization of the seed and coefficients to control the sequence.
+ *
+ * @author PixelJomi (Jomicraft) / Jonas
+ */
 public class QGC {
     private long currentSeed; // Xn
     private long d;           // quadratic coefficient
     private long a;           // linear coefficient
     private long c;           // increment
     private long m;           // modulus
-    private long minValue;    // Minimum value
+    private long minValue;    // Minimum value for the generated numbers
 
     /**
-     * Constructor for the Quadratic Congruential Generator.
-     * @param seed The starting point number used to further calculate all other ones.
-     * @param d The higher "d" the more it cares about the previous number times squared. "d * pow(previous number, 2)"
-     * @param a The higher "a" the more the next number cares about the previous number directly (in a linear way). "a * previous number"
-     * @param c It increases the step size of the program. For example the sequence would be 32891 and with "c" set to 2 it`s 381...
-     * @param maxValue The max value it can generate (inclusive).
+     * Constructs a new Quadratic Congruential Generator (QCG) instance.
+     * This constructor sets the minimum generated value to 0.
+     * The modulus `m` is calculated as `maxValue + 1`.
+     *
+     * @param seed     The initial value (X<sub>0</sub>) from which the sequence of pseudorandom numbers begins.
+     * @param d        The quadratic coefficient. It determines how strongly the square of the previous number
+     * influences the next number. A higher 'd' means a greater impact from (previous number)<sup>2</sup>.
+     * @param a        The linear coefficient. It determines how strongly the previous number (linearly)
+     * influences the next number. A higher 'a' means a greater impact from (previous number).
+     * @param c        The increment (constant term). This value is added in each step, shifting the sequence.
+     * It effectively increases the "step size" or offset in the sequence calculation.
+     * @param maxValue The maximum inclusive value that this generator can produce.
+     * The internal modulus will be `maxValue + 1`.
+     * @author PixelJomi (Jomicraft) / Jonas
      */
     public QGC(long seed, long d, long a, long c, long maxValue) {
         this.currentSeed = seed;
@@ -26,44 +45,68 @@ public class QGC {
     }
 
     /**
-     * Constructor for the Quadratic Congruential Generator.
-     * @param seed The starting point number used to further calculate all other ones.
-     * @param d The higher "d" the more it cares about the previous number times squared. "d * pow(previous number, 2)"
-     * @param a The higher "a" the more the next number cares about the previous number directly (in a linear way). "a * previous number"
-     * @param c It increases the step size of the program. For example the sequence would be 32891 and with "c" set to 2 it`s 381...
-     * @param maxValue The max value it can generate (inclusive).
-     * @param minValue The min value it can generate (inclusive).
+     * Constructs a new Quadratic Congruential Generator (QCG) instance with a specified minimum value.
+     * The modulus `m` is calculated based on the range `(maxValue + 1) - minValue`.
+     *
+     * @param seed     The initial value (X<sub>0</sub>) from which the sequence of pseudorandom numbers begins.
+     * @param d        The quadratic coefficient. It determines how strongly the square of the previous number
+     * influences the next number. A higher 'd' means a greater impact from (previous number)<sup>2</sup>.
+     * @param a        The linear coefficient. It determines how strongly the previous number (linearly)
+     * influences the next number. A higher 'a' means a greater impact from (previous number).
+     * @param c        The increment (constant term). This value is added in each step, shifting the sequence.
+     * It effectively increases the "step size" or offset in the sequence calculation.
+     * @param maxValue The maximum inclusive value that this generator can produce.
+     * @param minValue The minimum inclusive value that this generator can produce.
+     * @author PixelJomi (Jomicraft) / Jonas
      */
     public QGC(long seed, long d, long a, long c, long maxValue, long minValue) {
         this.currentSeed = seed;
         this.d = d;
         this.a = a;
         this.c = c;
+        // The modulus should represent the size of the range, so it's (max - min) + 1.
+        // The actual value generated will be (result_mod_m) + minValue.
         this.m = (maxValue + 1) - minValue;
         this.minValue = minValue;
     }
 
     /**
-     * Generates the next pseudorandom number in the sequence.
-     * @return The next pseudorandom number (long).
+     * Generates the next pseudorandom number in the sequence based on the Quadratic Congruential formula:
+     * X<sub>n+1</sub> = (d * X<sub>n</sub><sup>2</sup> + a * X<sub>n</sub> + c) mod m.
+     * The result is then adjusted by adding `minValue` to fit the desired range.
+     *
+     * @return The next pseudorandom number (of type long) generated by the QCG.
+     * @author PixelJomi (Jomicraft) / Jonas
      */
     public long next() {
-        // Calculate (d * Xn^2 + a * Xn + c) mod m
-        // Use long for intermediate calculations to prevent overflow before the modulo operation,
-        // especially if m is large.
-        long nextValue = ((d * currentSeed * currentSeed + a * currentSeed + c) % m) + minValue;
-        // Ensure the result is non-negative, as Java's % operator can return negative for negative dividends.
+        // Calculate (d * Xn^2 + a * Xn + c)
+        // Use long for intermediate calculations to prevent overflow before the modulo operation.
+        // It's important to use BigInteger for very large numbers if intermediate products might exceed long MAX_VALUE.
+        // For standard long values, careful ordering and explicit casts might be needed,
+        // but here, the direct multiplication should be fine unless seed, d, a are extremely large.
+        long nextValue = ((d * currentSeed * currentSeed + a * currentSeed + c) % m);
+
+        // Ensure the result of the modulo operation is non-negative, as Java's % operator
+        // can return a negative result if the dividend is negative.
         if (nextValue < 0) {
-            nextValue += m;
+            nextValue += m; // Add modulus to make it positive within the range [0, m-1]
         }
-        this.currentSeed = nextValue;
+
+        // Adjust the result to be within the desired [minValue, maxValue] range
+        nextValue += minValue;
+
+        this.currentSeed = nextValue; // Update the seed for the next iteration
         return nextValue;
     }
 
     /**
-     * Resets the generator to a new seed.
-     * @param newSeed The new seed value.
-     * */
+     * Resets the generator's internal state (current seed) to a new starting point.
+     * Calling this method will cause the sequence of generated numbers to restart
+     * from this new seed.
+     *
+     * @param newSeed The new long value to be used as the starting seed for the generator.
+     * @author PixelJomi (Jomicraft) / Jonas
+     */
     public void setSeed(long newSeed) {
         this.currentSeed = newSeed;
     }
