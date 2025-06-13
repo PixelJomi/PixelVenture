@@ -18,7 +18,7 @@ public class Renderer {
         this.window = window;
     }
 
-    public void renderGameObject(GameObject object, Camera camera) {
+    public void renderGameObject(GameObject object, Camera camera, boolean wireFrame) {
         GL30.glBindVertexArray(object.getMesh().getVAO());
         GL30.glEnableVertexAttribArray(0);
         GL30.glEnableVertexAttribArray(1);
@@ -30,6 +30,12 @@ public class Renderer {
         shader.setUniform("model", Matrix4f.transform(object.getPosition(),object.getRotation(),object.getScale()));
         shader.setUniform("projection", window.getProjectionMatrix());
         shader.setUniform("view",Matrix4f.view(camera.getPosition(),camera.getRotation()));
+        if (wireFrame) {
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_LINE);
+        } else {
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_FILL);
+        }
+
         GL11.glDrawElements(GL11.GL_TRIANGLES,object.getMesh().getIndices().length,GL11.GL_UNSIGNED_INT,0);
         shader.unbind();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER,0);

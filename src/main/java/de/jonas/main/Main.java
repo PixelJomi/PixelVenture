@@ -27,24 +27,68 @@ public class Main implements Runnable{
     public double tSLICE = 0.05;
     public double tNOW = 0;
 
-    public Mesh mesh = new Mesh(new Vertex[]{
-            //FRONT
-            new Vertex(new Vector3f(-0.5f,0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,0.0f)),
-            new Vertex(new Vector3f(-0.5f,-0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,1.0f)),
-            new Vertex(new Vector3f(0.5f,-0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,1.0f)),
-            new Vertex(new Vector3f(0.5f,0.5f,0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,0.0f)),
+    //TODO Make faces render individually and add "Block" as gameObject
 
-            new Vertex(new Vector3f(-0.5f,0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,0.0f)),
-            new Vertex(new Vector3f(-0.5f,-0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(0.0f,1.0f)),
-            new Vertex(new Vector3f(0.5f,-0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,1.0f)),
-            new Vertex(new Vector3f(0.5f,0.5f,-0.5f), PVData.DEFAULT_VERTEX_COLOR, new Vector2f(1.0f,0.0f))
+    public Mesh mesh = new Mesh(new Vertex[] {
+            //Back face
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+
+            //Front face
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
+
+            //Right face
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
+
+            //Left face
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
+
+            //Top face
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+
+            //Bottom face
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
     }, new int[] {
-            //FRONT
-            0,1,2,
-            0,2,3,
-            //BACK
-            6,5,4,
-            7,6,4
+            //Back face
+            3, 2, 1,
+            3, 1, 0,
+
+            //Front face
+            4, 5, 7,
+            7, 5, 6,
+
+            //Right face
+            11, 10, 9,
+            11, 9, 8,
+
+            //Left face
+            12, 13, 15,
+            15, 13, 14,
+
+            //Top face
+            17, 16, 19,
+            17, 19, 18,
+
+            //Bottom face
+            20, 21, 23,
+            23, 21, 22
     }, new Material("textures/testPic.png"));
 
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
@@ -69,6 +113,9 @@ public class Main implements Runnable{
         mesh.create();
         shader.create();
 
+        //TODO Remove once main menu is in place!
+        window.mouseState(true);
+
         Console.printSucc("Game initialized!",null);
     }
 
@@ -91,6 +138,8 @@ public class Main implements Runnable{
                 RunningData.GAME_TIME += 1;
             }
 
+            //TODO Update Player movement to be consistent.
+            camera.update();
             render();
 
             if (!UserData.VSYNC && UserData.FPS > 0) {window.sync(tNOW,UserData.FPS);}
@@ -100,14 +149,12 @@ public class Main implements Runnable{
 
     private void update() {
         PerformanceUtils.updateTPS();
-
-        camera.update();
-
         GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + RunningData.CURRENT_FPS + " | TPS: " + RunningData.CURRENT_TPS);
     }
 
     private void checkInput() {
         if (Input.isKeyToggledUp(GLFW.GLFW_KEY_F11)) window.setIsFullscreen(!window.isIsFullscreen());
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) window.mouseState(true);
     }
 
     private void render() {
@@ -115,7 +162,7 @@ public class Main implements Runnable{
         window.update();
 
 
-        renderer.renderGameObject(object, camera);
+        renderer.renderGameObject(object, camera,false);
 
 
         window.swapBuffers();

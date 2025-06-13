@@ -334,6 +334,19 @@ public class Window {
     }
 
     /**
+     * Controls the state of the mouse cursor within the GLFW window.
+     * This method can either disable (lock and hide) the cursor or set it back to normal (visible and movable).
+     *
+     * @param lock If {@code true}, the mouse cursor will be disabled (hidden and its movement
+     * will be locked to the window, providing infinite movement for camera controls, etc.).
+     * If {@code false}, the mouse cursor will revert to its normal state (visible and freely movable).
+     * @author PixelJomi (Jomicraft) / Jonas
+     */
+    public void mouseState(boolean lock) {
+        GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, lock ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+    }
+
+    /**
      * Sets the background clear color for the window. This color will be used
      * when {@link GL11#glClear(int)} is called with {@link GL11#GL_COLOR_BUFFER_BIT}.
      *
