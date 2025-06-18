@@ -1,5 +1,8 @@
 {
   "client":{
+    "input": {
+      "mouseSensitivity": 0.05
+    },
     "window": {
       "vsync":false,
       "startWidth":1280,
@@ -16,6 +19,7 @@
     }
   },
   "dev":{
-    "debug":true
+    "debug":true,
+    "wireframe":false
   }
 }

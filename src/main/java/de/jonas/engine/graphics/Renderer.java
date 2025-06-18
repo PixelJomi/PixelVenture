@@ -1,5 +1,6 @@
 package de.jonas.engine.graphics;
 
+import de.jonas.engine.data.UserData;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.objects.Camera;
@@ -18,7 +19,7 @@ public class Renderer {
         this.window = window;
     }
 
-    public void renderGameObject(GameObject object, Camera camera, boolean wireFrame) {
+    public void renderGameObject(GameObject object, Camera camera) {
         GL30.glBindVertexArray(object.getMesh().getVAO());
         GL30.glEnableVertexAttribArray(0);
         GL30.glEnableVertexAttribArray(1);
@@ -30,7 +31,7 @@ public class Renderer {
         shader.setUniform("model", Matrix4f.transform(object.getPosition(),object.getRotation(),object.getScale()));
         shader.setUniform("projection", window.getProjectionMatrix());
         shader.setUniform("view",Matrix4f.view(camera.getPosition(),camera.getRotation()));
-        if (wireFrame) {
+        if (UserData.WIREFRAME) {
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_LINE);
         } else {
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_FILL);

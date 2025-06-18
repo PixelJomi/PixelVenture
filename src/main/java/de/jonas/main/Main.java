@@ -89,6 +89,7 @@ public class Main implements Runnable{
             //Bottom face
             20, 21, 23,
             23, 21, 22
+            //TODO Make default loading use jar included files and add loading for outside data (optional)
             //TODO Add default material!
     }, new Material("textures/testPic.png"));
 
@@ -116,11 +117,13 @@ public class Main implements Runnable{
 
         //TODO Remove once main menu is in place!
         window.mouseState(true);
-
         Console.printSucc("Game initialized!",null);
     }
 
     public void run() {
+
+        //TODO Add a proper chat setting
+
         init();
         while (!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
             tNOW = GLFW.glfwGetTime();
@@ -162,8 +165,7 @@ public class Main implements Runnable{
         PerformanceUtils.updateFPS();
         window.update();
 
-
-        renderer.renderGameObject(object, camera,false);
+        renderer.renderGameObject(object, camera);
 
 
         window.swapBuffers();

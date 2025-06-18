@@ -16,6 +16,8 @@ public class UserData {
     public static int START_HEIGHT = 760;
     public static float CAMERA_NEAR = 0.1f;
     public static float CAMERA_FAR = 1000.0f;
+    public static boolean WIREFRAME = false;
+    public static float MOUSE_SENSITIVITY = 0.05f;
 
     public static void loadData() {
         JSONObject settingsJSONFile = JSONUtils.getJSONFile("data/settings.json");
@@ -28,6 +30,8 @@ public class UserData {
         START_HEIGHT = ObjectUtils.objectToInteger(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.window.startHeight"),START_HEIGHT);
         CAMERA_NEAR = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.camera.cameraNear"),CAMERA_NEAR);
         CAMERA_FAR = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.camera.cameraFar"),CAMERA_FAR);
+        WIREFRAME = ObjectUtils.objectToBoolean(JSONUtils.getObjectFromJSON(settingsJSONFile,"dev.wireframe"),WIREFRAME);
+        MOUSE_SENSITIVITY = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.input.mouseSensitivity"),MOUSE_SENSITIVITY);
 
 
         //DON'T REMOVE IG JUST DEBUG STUFF...

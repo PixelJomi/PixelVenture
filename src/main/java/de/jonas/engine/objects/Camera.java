@@ -1,5 +1,6 @@
 package de.jonas.engine.objects;
 
+import de.jonas.engine.data.UserData;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.math.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -7,8 +8,6 @@ import org.lwjgl.glfw.GLFW;
 public class Camera {
     private Vector3f position,rotation;
     private float moveSpeed = 0.05f;
-    //TODO Add proper mouse sensitivity handling via JSON
-    private float mouseSensitivity = 0.05f;
     private double oldMouseX,oldMouseY = 0.0d;
     private double newMouseX,newMouseY;
 
@@ -47,7 +46,7 @@ public class Camera {
         float dx = (float) (newMouseX - oldMouseX);
         float dy = (float) (newMouseY - oldMouseY);
 
-        rotation = Vector3f.add(rotation,new Vector3f(-dy * mouseSensitivity,-dx * mouseSensitivity,0));
+        rotation = Vector3f.add(rotation,new Vector3f(-dy * UserData.MOUSE_SENSITIVITY,-dx * UserData.MOUSE_SENSITIVITY,0));
 
         oldMouseX = newMouseX;
         oldMouseY = newMouseY;
@@ -57,12 +56,4 @@ public class Camera {
     public void setRotation(Vector3f rotation) {this.rotation = rotation;}
     public Vector3f getPosition() {return position;}
     public Vector3f getRotation() {return rotation;}
-
-    public float getMouseSensitivity() {
-        return mouseSensitivity;
-    }
-
-    public void setMouseSensitivity(float mouseSensitivity) {
-        this.mouseSensitivity = mouseSensitivity;
-    }
 }
