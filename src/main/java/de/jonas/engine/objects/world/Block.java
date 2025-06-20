@@ -7,13 +7,11 @@ import de.jonas.engine.objects.game.GameObject;
 import de.jonas.main.TestingGrounds;
 
 public class Block{
-    private String blockName;
-    private Mesh mesh;
+    private String blockId;
 
-    public Block(String blockName,String type) {
-        this.blockName = blockName;
-        TestingGrounds.add();
-        //TODO add block mesh types.
-        mesh = new Mesh(Default.DEFAULT_VERTICES, Default.DEFAULT_INDICES, new Material("textures/testPic.png"));
+    public Block(String blockId) {
+        this.blockId = blockId;
     }
+
+    public String getBlockId() {return blockId;}
 }

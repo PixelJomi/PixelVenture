@@ -1,9 +1,10 @@
-package de.jonas.engine.objects.world;
+package de.jonas.engine.objects;
 
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.objects.game.player.Player;
+import de.jonas.engine.objects.world.Chunk;
 import de.jonas.engine.utils.Console;
 
 public class Scene {
@@ -27,7 +28,6 @@ public class Scene {
     public void generateChunks() {
         for (int i = 0;i < chunks.length;i++) {
             chunks[i] = new Chunk(calculateChunkPos(i));
-            Console.printDebug("Pos: ",calculateChunkPos(i));
         }
     }
 

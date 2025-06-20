@@ -9,6 +9,7 @@ import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.objects.game.player.Camera;
 import de.jonas.engine.objects.game.GameObject;
 import de.jonas.engine.objects.game.player.Player;
+import de.jonas.engine.objects.world.ChunkSection;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.utils.PerformanceUtils;
 import de.jonas.engine.data.PVData;
@@ -31,11 +32,12 @@ public class Main implements Runnable{
 
     //TODO Make faces render individually and add "Block" as gameObject
 
-    public Mesh mesh = new Mesh(Default.DEFAULT_VERTICES, Default.DEFAULT_INDICES, new Material("textures/testPic.png"));
+
+    public Mesh mesh = new ChunkSection((short) 16).generateMesh(new Vector2f(0f,0f));
 
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
 
-    public Player player = new Player(new Vector3f(0,0,1),new Vector3f(0,0,0));
+    public Player player = new Player(new Vector3f(0, 0, 1),new Vector3f(0,0,0));
 
     public void start() {
         game = new Thread(this, "game");
