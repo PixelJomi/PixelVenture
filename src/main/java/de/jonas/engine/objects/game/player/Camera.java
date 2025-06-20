@@ -1,4 +1,4 @@
-package de.jonas.engine.objects;
+package de.jonas.engine.objects.game.player;
 
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.io.Input;
@@ -7,7 +7,6 @@ import org.lwjgl.glfw.GLFW;
 
 public class Camera {
     private Vector3f position,rotation;
-    private float moveSpeed = 0.05f;
     private double oldMouseX,oldMouseY = 0.0d;
     private double newMouseX,newMouseY;
 
@@ -16,12 +15,12 @@ public class Camera {
             this.rotation = rotation;
     }
 
-    public void update() {
+    public void update(Player player) {
         newMouseX = Input.getMouseX();
         newMouseY = Input.getMouseY();
 
-        float x = (float) Math.sin(Math.toRadians(rotation.getY())) * moveSpeed;
-        float z = (float) Math.cos(Math.toRadians(rotation.getY())) * moveSpeed;
+        float x = (float) Math.sin(Math.toRadians(rotation.getY())) * player.getMoveSpeed();
+        float z = (float) Math.cos(Math.toRadians(rotation.getY())) * player.getMoveSpeed();
 
 
         if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
@@ -37,10 +36,10 @@ public class Camera {
             position = Vector3f.add(position, new Vector3f(x, 0, z));
         }
         if (Input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
-            position = Vector3f.add(position, new Vector3f(0, moveSpeed, 0));
+            position = Vector3f.add(position, new Vector3f(0, player.getMoveSpeed(), 0));
         }
         if (Input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            position = Vector3f.add(position, new Vector3f(0, -moveSpeed, 0));
+            position = Vector3f.add(position, new Vector3f(0, -player.getMoveSpeed(), 0));
         }
 
         float dx = (float) (newMouseX - oldMouseX);

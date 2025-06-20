@@ -1,12 +1,14 @@
 package de.jonas.main;
 
+import de.jonas.engine.data.blocks.Default;
 import de.jonas.engine.graphics.*;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
-import de.jonas.engine.objects.Camera;
-import de.jonas.engine.objects.GameObject;
+import de.jonas.engine.objects.game.player.Camera;
+import de.jonas.engine.objects.game.GameObject;
+import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.utils.PerformanceUtils;
 import de.jonas.engine.data.PVData;
@@ -29,73 +31,11 @@ public class Main implements Runnable{
 
     //TODO Make faces render individually and add "Block" as gameObject
 
-    public Mesh mesh = new Mesh(new Vertex[] {
-            //Back face
-            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
-
-            //Front face
-            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
-
-            //Right face
-            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
-
-            //Left face
-            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
-            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
-
-            //Top face
-            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
-            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
-
-            //Bottom face
-            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
-    }, new int[] {
-            //Back face
-            3, 2, 1,
-            3, 1, 0,
-
-            //Front face
-            4, 5, 7,
-            7, 5, 6,
-
-            //Right face
-            11, 10, 9,
-            11, 9, 8,
-
-            //Left face
-            12, 13, 15,
-            15, 13, 14,
-
-            //Top face
-            17, 16, 19,
-            17, 19, 18,
-
-            //Bottom face
-            20, 21, 23,
-            23, 21, 22
-            //TODO Make default loading use jar included files and add loading for outside data (optional)
-            //TODO Add default material!
-    }, new Material("textures/testPic.png"));
+    public Mesh mesh = new Mesh(Default.DEFAULT_VERTICES, Default.DEFAULT_INDICES, new Material("textures/testPic.png"));
 
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
 
-    public Camera camera = new Camera(new Vector3f(0,0,1),new Vector3f(0,0,0));
+    public Player player = new Player(new Vector3f(0,0,1),new Vector3f(0,0,0));
 
     public void start() {
         game = new Thread(this, "game");
@@ -143,7 +83,7 @@ public class Main implements Runnable{
             }
 
             //TODO Update Player movement to be consistent.
-            camera.update();
+            player.update();
             render();
 
             if (!UserData.VSYNC && UserData.FPS > 0) {window.sync(tNOW,UserData.FPS);}
@@ -165,8 +105,7 @@ public class Main implements Runnable{
         PerformanceUtils.updateFPS();
         window.update();
 
-        renderer.renderGameObject(object, camera);
-
+        renderer.renderGameObject(object, player.getCamera());
 
         window.swapBuffers();
     }
