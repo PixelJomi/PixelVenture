@@ -14,17 +14,6 @@ import de.jonas.engine.utils.Console;
 public class TestingGrounds {
     public static int amount = 0;
     public static void main(String[] args) {
-        UserData.loadData();
-
-        ChunkSection chunkSection = new ChunkSection((short) 16);
-
-        Mesh mesh = chunkSection.generateMesh(new Vector2f(1f,1f));
-
-        Vertex[] vertices = mesh.getVertices();
-
-//        for (int i = 0; i < vertices.length;i++) {
-//            System.out.println(vertices[i].getPos().toString());
-//        }
 
     }
 

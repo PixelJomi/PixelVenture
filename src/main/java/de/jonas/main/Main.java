@@ -7,6 +7,7 @@ import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.objects.game.GameObject;
 import de.jonas.engine.objects.game.player.Player;
+import de.jonas.engine.objects.world.Chunk;
 import de.jonas.engine.objects.world.ChunkSection;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.utils.PerformanceUtils;
@@ -31,9 +32,14 @@ public class Main implements Runnable{
     //TODO Make faces render individually and add "Block" as gameObject
 
 
-    public Mesh mesh = new ChunkSection((short) 16).generateMesh(new Vector2f(0f,0f));
-
-    public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
+    public Chunk chunk = new Chunk(new Vector2f(0,0));
+    public Mesh chunkMesh = chunk.getMesh();
+    public GameObject chunkObject = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),chunkMesh);
+//    public Mesh mesh = new ChunkSection((short) 1).generateMesh(new Vector2f(0f,0f));
+//    public Mesh meshTwo = new ChunkSection((short) 0).generateMesh(new Vector2f(0f,0f));
+//
+//    public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
+//    public GameObject objectTwo = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),meshTwo);
 
     public Player player = new Player(new Vector3f(0, 0, 1),new Vector3f(0,0,0));
 
@@ -53,7 +59,9 @@ public class Main implements Runnable{
         //bedingung ? wert_wenn_wahr : wert_wenn_falsch
         window.create(UserData.VSYNC ? 1 : 0);
 
-        mesh.create();
+//        mesh.create();
+//        meshTwo.create();
+        chunkMesh.create();
         shader.create();
 
         //TODO Remove once main menu is in place!
@@ -106,14 +114,18 @@ public class Main implements Runnable{
         PerformanceUtils.updateFPS();
         window.update();
 
-        renderer.renderGameObject(object, player.getCamera());
+//        renderer.renderGameObject(object, player.getCamera());
+//        renderer.renderGameObject(objectTwo,player.getCamera());
+        renderer.renderGameObject(chunkObject,player.getCamera());
 
         window.swapBuffers();
     }
 
     private void close() {
         window.destroy();
-        mesh.destroy();
+//        mesh.destroy();
+//        meshTwo.destroy();
+        chunkMesh.destroy();
         shader.destroy();
     }
 

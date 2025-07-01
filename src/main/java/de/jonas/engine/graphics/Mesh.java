@@ -27,6 +27,31 @@ public class Mesh {
         this.indices = indices;
         this.material = material;
     }
+    public void addMesh(Mesh meshTwo) {
+        Vertex[] vertices1 = meshTwo.getVertices();
+        Vertex[] mergedVertices = new Vertex[vertices.length + vertices1.length];
+
+        for (int i = 0; i < vertices.length; i++) {
+            mergedVertices[i] = vertices[i];
+        }
+        for (int i = 0; i < vertices1.length; i++) {
+            mergedVertices[vertices.length + i] = vertices1[i];
+        }
+        vertices = mergedVertices;
+
+        int[] indices1 = meshTwo.getIndices();
+        int[] mergedIndices = new int[indices.length + indices1.length];
+
+        for (int i = 0; i < indices.length; i++) {
+            mergedIndices[i] = indices[i];
+        }
+        for (int i = 0; i < indices1.length; i++) {
+            mergedIndices[indices.length + i] = indices1[i];
+        }
+        indices = mergedIndices;
+    }
+
+
     //Methods
     public void create() {
         material.create();
