@@ -6,6 +6,44 @@ import de.jonas.engine.math.Vector3f;
 
 public class Default {
 
+    public static final Vertex[] DEFAULT_VOXEL_VERTICES_TOP = {
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 1.0f))
+    };
+    public static final Vertex[] DEFAULT_VOXEL_VERTICES_BOTTOM = {
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f))
+    };
+    public static final Vertex[] DEFAULT_VOXEL_VERTICES_FRONT = {
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f))
+    };
+    public static final Vertex[] DEFAULT_VOXEL_VERTICES_BACK = {
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f))
+    };
+    public static final Vertex[] DEFAULT_VOXEL_VERTICES_LEFT = {
+            new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(0.0f, 0.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f(-0.5f,  0.5f,  0.5f), new Vector2f(1.0f, 0.0f))
+
+    };
+    public static final Vertex[] DEFAULT_VOXEL_VERTICES_RIGHT = {
+            new Vertex(new Vector3f( 0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(0.0f, 1.0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f,  0.5f), new Vector2f(0.0f, 0.0f))
+    };
+
     public static final Vertex[] DEFAULT_VERTICES = {
             //Back face
             new Vertex(new Vector3f(-0.5f,  0.5f, -0.5f), new Vector2f(1.0f, 0.0f)),
@@ -43,6 +81,32 @@ public class Default {
             new Vertex(new Vector3f( 0.5f, -0.5f, -0.5f), new Vector2f(1.0f, 1.0f)),
             new Vertex(new Vector3f( 0.5f, -0.5f,  0.5f), new Vector2f(1.0f, 0.0f)),
     };
+
+    public static final int[] DEFAULT_VOXEL_INDICES_TOP = {
+            1, 0, 3,
+            1, 3, 2
+    };
+    public static final int[] DEFAULT_VOXEL_INDICES_BOTTOM = {
+            0, 1, 3,
+            3, 1, 2
+    };
+    public static final int[] DEFAULT_VOXEL_INDICES_FRONT = {
+            0, 1, 3,
+            3, 1, 2
+    };
+    public static final int[] DEFAULT_VOXEL_INDICES_BACK = {
+            3, 2, 1,
+            3, 1, 0
+    };
+    public static final int[] DEFAULT_VOXEL_INDICES_LEFT = {
+            0, 1, 3,
+            3, 1, 2
+    };
+    public static final int[] DEFAULT_VOXEL_INDICES_RIGHT = {
+            3, 2, 1,
+            3, 1, 0
+    };
+
 
     public static final int[] DEFAULT_INDICES = {
             //Back face

@@ -1,12 +1,10 @@
 package de.jonas.main;
 
-import de.jonas.engine.data.blocks.Default;
 import de.jonas.engine.graphics.*;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
-import de.jonas.engine.objects.game.player.Camera;
 import de.jonas.engine.objects.game.GameObject;
 import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.objects.world.ChunkSection;
@@ -38,6 +36,7 @@ public class Main implements Runnable{
     public GameObject object = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
 
     public Player player = new Player(new Vector3f(0, 0, 1),new Vector3f(0,0,0));
+
 
     public void start() {
         game = new Thread(this, "game");

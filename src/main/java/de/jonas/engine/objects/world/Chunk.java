@@ -19,8 +19,6 @@ public class Chunk {
         }
     }
 
-    public Vector2f getChunkPos() {
-        return chunkPos;
-    }
+    public Vector2f getChunkPos() {return chunkPos;}
 
 }
