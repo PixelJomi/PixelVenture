@@ -4,9 +4,12 @@ import de.jonas.engine.data.PVData;
 import de.jonas.engine.data.blocks.Default;
 import de.jonas.engine.graphics.Material;
 import de.jonas.engine.graphics.Mesh;
+import de.jonas.engine.graphics.Renderer;
 import de.jonas.engine.graphics.Vertex;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
+import de.jonas.engine.objects.game.GameObject;
+import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.utils.BasicMeshData;
 import de.jonas.engine.utils.Console;
 
@@ -14,13 +17,15 @@ import java.util.ArrayList;
 
 public class ChunkSection {
     private short sectionHeight;
-    private Mesh mesh;
+    private Vector2f chunkPos;
     private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     private ArrayList<Integer> indices = new ArrayList<Integer>();
     private Voxel[][][] voxels = new Voxel[PVData.SECTION_SIZE][PVData.SECTION_SIZE][PVData.SECTION_SIZE];
+    private Mesh mesh;
 
-    public ChunkSection(short sectionHeight) {
+    public ChunkSection(Vector2f chunkPos, short sectionHeight) {
         this.sectionHeight = sectionHeight;
+        this.chunkPos = chunkPos;
         generateVoxels();
     }
 
@@ -34,7 +39,7 @@ public class ChunkSection {
         }
     }
 
-    public BasicMeshData generateMesh(Vector2f chunkPos) {
+    public void generateMesh() {
         for (int x = 0;x < PVData.SECTION_SIZE;x++) {
             for (int y = 0;y < PVData.SECTION_SIZE;y++) {
                 for (int z= 0;z < PVData.SECTION_SIZE;z++) {
@@ -46,50 +51,50 @@ public class ChunkSection {
                         try {
                             if (x+1 < PVData.SECTION_SIZE) {
                                 if (isAir(new Vector3f(x+1,y,z))) {
-                                    addFace(Default.DEFAULT_VOXEL_VERTICES_RIGHT, Default.DEFAULT_VOXEL_INDICES_RIGHT, new Vector3f(x,y,z),chunkPos);
+                                    addFace(Default.DEFAULT_VOXEL_VERTICES_RIGHT, Default.DEFAULT_VOXEL_INDICES_RIGHT, new Vector3f(x,y,z));
                                 }
                             } else {
-                                addFace(Default.DEFAULT_VOXEL_VERTICES_RIGHT, Default.DEFAULT_VOXEL_INDICES_RIGHT, new Vector3f(x,y,z),chunkPos);
+                                addFace(Default.DEFAULT_VOXEL_VERTICES_RIGHT, Default.DEFAULT_VOXEL_INDICES_RIGHT, new Vector3f(x,y,z));
                             }
 
                             if (x-1 >= 0) {
                                 if (isAir(new Vector3f(x-1,y,z))) {
-                                    addFace(Default.DEFAULT_VOXEL_VERTICES_LEFT, Default.DEFAULT_VOXEL_INDICES_LEFT, new Vector3f(x,y,z),chunkPos);
+                                    addFace(Default.DEFAULT_VOXEL_VERTICES_LEFT, Default.DEFAULT_VOXEL_INDICES_LEFT, new Vector3f(x,y,z));
                                 }
                             } else {
-                                addFace(Default.DEFAULT_VOXEL_VERTICES_LEFT, Default.DEFAULT_VOXEL_INDICES_LEFT, new Vector3f(x,y,z),chunkPos);
+                                addFace(Default.DEFAULT_VOXEL_VERTICES_LEFT, Default.DEFAULT_VOXEL_INDICES_LEFT, new Vector3f(x,y,z));
                             }
 
                             if (y+1 < PVData.SECTION_SIZE) {
                                 if (isAir(new Vector3f(x,y+1,z))) {
-                                    addFace(Default.DEFAULT_VOXEL_VERTICES_TOP, Default.DEFAULT_VOXEL_INDICES_TOP, new Vector3f(x, y, z),chunkPos);
+                                    addFace(Default.DEFAULT_VOXEL_VERTICES_TOP, Default.DEFAULT_VOXEL_INDICES_TOP, new Vector3f(x, y, z));
                                 }
                             } else {
-                                addFace(Default.DEFAULT_VOXEL_VERTICES_TOP, Default.DEFAULT_VOXEL_INDICES_TOP, new Vector3f(x, y, z),chunkPos);
+                                addFace(Default.DEFAULT_VOXEL_VERTICES_TOP, Default.DEFAULT_VOXEL_INDICES_TOP, new Vector3f(x, y, z));
                             }
 
                             if (y-1 >= 0) {
                                 if (isAir(new Vector3f(x,y-1,z))) {
-                                    addFace(Default.DEFAULT_VOXEL_VERTICES_BOTTOM, Default.DEFAULT_VOXEL_INDICES_BOTTOM, new Vector3f(x,y,z),chunkPos);
+                                    addFace(Default.DEFAULT_VOXEL_VERTICES_BOTTOM, Default.DEFAULT_VOXEL_INDICES_BOTTOM, new Vector3f(x,y,z));
                                 }
                             } else {
-                                addFace(Default.DEFAULT_VOXEL_VERTICES_BOTTOM, Default.DEFAULT_VOXEL_INDICES_BOTTOM, new Vector3f(x,y,z),chunkPos);
+                                addFace(Default.DEFAULT_VOXEL_VERTICES_BOTTOM, Default.DEFAULT_VOXEL_INDICES_BOTTOM, new Vector3f(x,y,z));
                             }
 
                             if (z+1 < PVData.SECTION_SIZE) {
                                 if (isAir(new Vector3f(x,y,z+1))) {
-                                    addFace(Default.DEFAULT_VOXEL_VERTICES_FRONT, Default.DEFAULT_VOXEL_INDICES_FRONT, new Vector3f(x, y, z),chunkPos);
+                                    addFace(Default.DEFAULT_VOXEL_VERTICES_FRONT, Default.DEFAULT_VOXEL_INDICES_FRONT, new Vector3f(x, y, z));
                                 }
                             } else {
-                                addFace(Default.DEFAULT_VOXEL_VERTICES_FRONT, Default.DEFAULT_VOXEL_INDICES_FRONT, new Vector3f(x, y, z),chunkPos);
+                                addFace(Default.DEFAULT_VOXEL_VERTICES_FRONT, Default.DEFAULT_VOXEL_INDICES_FRONT, new Vector3f(x, y, z));
                             }
 
                             if (z-1 >= 0) {
                                 if (isAir(new Vector3f(x,y,z-1))) {
-                                    addFace(Default.DEFAULT_VOXEL_VERTICES_BACK, Default.DEFAULT_VOXEL_INDICES_BACK, new Vector3f(x,y,z),chunkPos);
+                                    addFace(Default.DEFAULT_VOXEL_VERTICES_BACK, Default.DEFAULT_VOXEL_INDICES_BACK, new Vector3f(x,y,z));
                                 }
                             } else {
-                                addFace(Default.DEFAULT_VOXEL_VERTICES_BACK, Default.DEFAULT_VOXEL_INDICES_BACK, new Vector3f(x,y,z),chunkPos);
+                                addFace(Default.DEFAULT_VOXEL_VERTICES_BACK, Default.DEFAULT_VOXEL_INDICES_BACK, new Vector3f(x,y,z));
                             }
 
                         } catch (Exception e) {
@@ -99,17 +104,18 @@ public class ChunkSection {
                 }
             }
         }
+        int[] newIndices = new int[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            newIndices[i] = indices.get(i);
+        }
+        Vertex[] newVertices = vertices.toArray(new Vertex[0]);
 
-//        int[] newIndices = new int[indices.size()];
-//        for (int i = 0; i < indices.size(); i++) {
-//            newIndices[i] = indices.get(i);
-//        }
-//
-//        Vertex[] newVertices = new Vertex[vertices.size()];
-//        for (int i = 0; i < vertices.size(); i++) {
-//            newVertices[i] = vertices.get(i);
-//        }
-        return new BasicMeshData(vertices,indices);
+        //TODO Add atlas texture rendering
+        if (mesh != null) {
+            mesh.destroy();
+        }
+        mesh = new Mesh(newVertices,newIndices,new Material("textures/testPic.png"));
+        mesh.create();
     }
 
     private boolean isAir(Vector3f pos) {
@@ -120,8 +126,20 @@ public class ChunkSection {
         }
     }
 
-    private void addFace(Vertex[] faceVerticesTemplate, int[] faceIndicesTemplate, Vector3f voxelPosition, Vector2f chunkPos) {
-        voxelPosition.add(chunkPos.getX() * PVData.SECTION_SIZE,sectionHeight * PVData.SECTION_SIZE,chunkPos.getX() * PVData.SECTION_SIZE);
+    public void render(Renderer renderer, Player player) {
+        GameObject sectionObject = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
+        renderer.renderGameObject(sectionObject,player.getCamera());
+    }
+
+
+    public void destroy() {
+        mesh.destroy();
+        vertices.clear();
+        indices.clear();
+    }
+
+    private void addFace(Vertex[] faceVerticesTemplate, int[] faceIndicesTemplate, Vector3f voxelPosition) {
+        voxelPosition.add(chunkPos.getX() * PVData.SECTION_SIZE,sectionHeight * PVData.SECTION_SIZE,chunkPos.getY() * PVData.SECTION_SIZE);
 
         int baseVertexIndex = this.vertices.size();
 
@@ -136,6 +154,17 @@ public class ChunkSection {
         }
     }
 
+    public void setVoxel(Vector3f voxelSectionCords, String voxelID) {
+        try {
+            voxels[(int) voxelSectionCords.getX()][(int) voxelSectionCords.getY()][(int) voxelSectionCords.getZ()].setVoxelID(voxelID);
+            generateMesh();
+        } catch (Exception e) {
+            Console.printError("Could not set voxel to \"" + voxelID + "\"", voxelSectionCords);
+        }
 
+    }
 
+    public Voxel getVoxel(Vector3f voxelSectionPos) {
+        return voxels[(int) voxelSectionPos.getX()][(int) voxelSectionPos.getY()][(int) voxelSectionPos.getZ()];
+    }
 }

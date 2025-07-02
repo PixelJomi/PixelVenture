@@ -8,4 +8,6 @@ public class Voxel {
     }
 
     public String getVoxelID() {return voxelID;}
+
+    public void setVoxelID(String voxelID) {this.voxelID = voxelID;}
 }
