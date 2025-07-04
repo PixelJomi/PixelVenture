@@ -1,5 +1,6 @@
 package de.jonas.engine.objects.game.player;
 
+import de.jonas.engine.data.RunningData;
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.math.Vector3f;
@@ -45,7 +46,9 @@ public class Camera {
         float dx = (float) (newMouseX - oldMouseX);
         float dy = (float) (newMouseY - oldMouseY);
 
-        rotation = Vector3f.add(rotation,new Vector3f(-dy * UserData.MOUSE_SENSITIVITY,-dx * UserData.MOUSE_SENSITIVITY,0));
+        if (!RunningData.DEBUG_GUI) {
+            rotation = Vector3f.add(rotation,new Vector3f(-dy * UserData.MOUSE_SENSITIVITY,-dx * UserData.MOUSE_SENSITIVITY,0));
+        }
 
         oldMouseX = newMouseX;
         oldMouseY = newMouseY;

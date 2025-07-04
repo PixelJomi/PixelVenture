@@ -36,7 +36,6 @@ public class Renderer {
         } else {
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_FILL);
         }
-
         GL11.glDrawElements(GL11.GL_TRIANGLES,object.getMesh().getIndices().length,GL11.GL_UNSIGNED_INT,0);
         shader.unbind();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER,0);
@@ -44,6 +43,7 @@ public class Renderer {
         GL30.glDisableVertexAttribArray(1);
         GL30.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_FILL);
     }
 
 }

@@ -2,101 +2,84 @@ package de.jonas.engine.io;
 
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector3f;
+import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.data.PVData;
 import de.jonas.engine.data.RunningData;
 import de.jonas.engine.data.UserData;
+import de.jonas.engine.utils.NuklearUtils;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.nuklear.NkAllocator;
+import org.lwjgl.nuklear.NkContext;
+import org.lwjgl.nuklear.NkDrawVertexLayoutElement;
+import org.lwjgl.nuklear.NkVec2;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.Platform;
 
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.nuklear.Nuklear.*;
+import static org.lwjgl.nuklear.Nuklear.nnk_strlen;
+import static org.lwjgl.opengl.ARBDebugOutput.*;
+import static org.lwjgl.opengl.ARBDebugOutput.GL_DEBUG_SEVERITY_LOW_ARB;
+import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL11C.GL_NEAREST;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL11C.GL_RGBA8;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11C.GL_TRUE;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11C.glBindTexture;
+import static org.lwjgl.opengl.GL11C.glGenTextures;
+import static org.lwjgl.opengl.GL11C.glTexImage2D;
+import static org.lwjgl.opengl.GL11C.glTexParameteri;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.glBindBuffer;
+import static org.lwjgl.opengl.GL15C.glGenBuffers;
+import static org.lwjgl.opengl.GL20C.*;
+import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30C.glBindVertexArray;
+import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.*;
 
-/**
- * Manages the GLFW window, its properties, and its lifecycle within the engine.
- * This class handles window creation, resizing, input binding, OpenGL context setup,
- * and background operations like buffer swapping and event polling.
- *
- * @author PixelJomi (Jomicraft) / Jonas
- */
 public class Window {
-    /**
-     * The GLFW window handle. This is a unique identifier for the window.
-     */
     private long window;
-    /**
-     * The callback for handling window resize events.
-     */
-    private GLFWWindowSizeCallback sizeCallback;
-
-    /**
-     * The width of the primary monitor in pixels.
-     */
     private int monitorWidth;
-    /**
-     * The height of the primary monitor in pixels.
-     */
     private int monitorHeight;
-    /**
-     * The current width of the window in pixels.
-     */
     private int width;
-    /**
-     * The current height of the window in pixels.
-     */
     private int height;
-    /**
-     * The title of the window, displayed in the window's title bar.
-     */
     private String title;
 
-    /**
-     * An array to store the window's X position when exiting fullscreen mode.
-     */
     private int[] windowPosX = new int[1];
-    /**
-     * An array to store the window's Y position when exiting fullscreen mode.
-     */
     private int[] windowPosY = new int[1];
 
-    /**
-     * The background color of the window, cleared on each frame.
-     * Uses {@link Vector3f} for RGB values (0.0-1.0 range).
-     */
     private Vector3f backgroundColor = PVData.DEFAULT_BACKGROUND_COLOR;
-    /**
-     * The projection matrix used for rendering, updated on window resize or FOV changes.
-     */
+    private GLFWWindowSizeCallback sizeCallback;
     private Matrix4f projectionMatrix;
-    /**
-     * A flag indicating whether the window is currently in fullscreen mode.
-     */
+
     private boolean isFullscreen;
-    /**
-     * A flag indicating if the window has been resized and the viewport needs updating.
-     */
     private boolean isResized;
 
-    /**
-     * The {@link Input} instance associated with this window, handling keyboard and mouse events.
-     */
     public Input input;
+    public NuklearUtils nuklearUtils;
 
-    /**
-     * Constructs a new Window instance with specified dimensions and title.
-     * The projection matrix is initialized based on the given dimensions.
-     *
-     * @param width  The initial width of the window.
-     * @param height The initial height of the window.
-     * @param title  The initial title of the window.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
@@ -104,47 +87,30 @@ public class Window {
         updateProjectionMatrix();
     }
 
-    /**
-     * Creates and initializes the GLFW window and its associated OpenGL context.
-     * This method handles GLFW initialization, window creation, monitor data retrieval,
-     * window positioning, OpenGL capability setup (DEPTH_TEST, CULL_FACE, BLEND),
-     * input callback registration, and buffer swap interval.
-     * If GLFW or the window cannot be created, a fatal error is logged.
-     *
-     * @param swapInterval The swap interval (V-Sync setting). 0 for no V-Sync, 1 for V-Sync.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
-    public void create(int swapInterval) {
-        Console.printDebug("Creating Window Class...", null);
+    public void create(boolean vsync) {
         //Try to initialize GLFW if not working return and output fatal Error!
         Console.printDebug("Initializing GLFW...", null);
         if (!GLFW.glfwInit()) {
             Console.printFatal("GLFW wasn't initialized!", false);
             return;
         }
-        Console.printSucc("GLFW successfully initialized!", true);
 
-        //Create a new Input Instance to handle Input!
-        Console.printDebug("Creating Input instance...", null);
-        input = new Input();
-        Console.printSucc("Successfully created Input instance!", true);
+        glfwDefaultWindowHints();
+        if (UserData.DEBUG) glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+
 
         //Try to create the GLFW window!
-        Console.printDebug("Creating window handle...", null);
         window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
         if (window == 0) {
             Console.printFatal("GLFW window wasn't created!", window);
             return;
         }
-        Console.printSucc("Window handle created!", window);
 
         //Get Monitor Data and store width and height in monitorWidth / monitorHeight!
-        Console.printDebug("Getting videoMode for monitor...", null);
         GLFWVidMode videoMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
         if (videoMode != null) {
             monitorWidth = videoMode.width();
             monitorHeight = videoMode.height();
-            Console.printSucc("Successfully got videoMode for monitor!", monitorWidth + "|" + monitorHeight);
         } else {
             Console.printWarn("Could not get videoMode for monitor!", false);
         }
@@ -154,65 +120,73 @@ public class Window {
         windowPosY[0] = (int) (monitorHeight - height) / 2;
 
         //Set the Window pos to the previously calculated pos!
-        Console.printDebug("Setting window position to the middle of the screen...", windowPosX[0] + "|" + windowPosY[0]);
         GLFW.glfwSetWindowPos(window, windowPosX[0], windowPosY[0]);
-        Console.printSucc("Set window position to the middle of the screen!", windowPosX[0] + "|" + windowPosY[0]);
 
         //Make the GLFW Content be the created Window!
-        Console.printDebug("Setting the GLFW Context to created window...", window);
         GLFW.glfwMakeContextCurrent(window);
-        Console.printSucc("Set the GLFW Context to created window!", window);
 
         //Enable GL commands on GLFW window!
-        Console.printDebug("Enabling OpenGL commands on GLFW window...", window);
         GL.createCapabilities();
-        Console.printSucc("Enabled OpenGL commands on GLFW window!", window);
+        GLCapabilities caps = GL.createCapabilities();
+
+        try {
+            if (UserData.DEBUG) {
+                Callback debugProc = GLUtil.setupDebugMessageCallback();
+            }
+        } catch (Exception e) {
+            Console.printError("A error accrued while setting up GLDebugging.",false);
+        }
+
+        if (caps.OpenGL43) {
+            GL43.glDebugMessageControl(GL43.GL_DEBUG_SOURCE_API, GL43.GL_DEBUG_TYPE_OTHER, GL43.GL_DEBUG_SEVERITY_NOTIFICATION, (IntBuffer)null, false);
+        } else if (caps.GL_KHR_debug) {
+            KHRDebug.glDebugMessageControl(
+                    KHRDebug.GL_DEBUG_SOURCE_API,
+                    KHRDebug.GL_DEBUG_TYPE_OTHER,
+                    KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION,
+                    (IntBuffer)null,
+                    false
+            );
+        } else if (caps.GL_ARB_debug_output) {
+            glDebugMessageControlARB(GL_DEBUG_SOURCE_API_ARB, GL_DEBUG_TYPE_OTHER_ARB, GL_DEBUG_SEVERITY_LOW_ARB, (IntBuffer)null, false);
+        }
+
+        glEnable(GL_DEBUG_OUTPUT);
+        glDebugMessageCallback((source, type, id, severity, length, message, userParam) -> {
+            Console.printError("OpenGL Error: " + GLDebugMessageCallback.getMessage(length, message),false);
+        }, 0);
 
         //Enable the DEPTH_TEST for the window!
-        Console.printDebug("Enabling DEPTH_TEST...", GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        Console.printSucc("Enabled DEPTH_TEST!", GL11.GL_DEPTH_TEST);
         //Enable the CULL_FACE for the window!
-        Console.printDebug("Enabling CULL_FACE...", GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_CULL_FACE);
-        Console.printSucc("Enabled CULL_FACE!", GL11.GL_CULL_FACE);
         //Enable the GL_BLEND for the window!
-        Console.printDebug("Enabling GL_BLEND...", GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_BLEND);
-        Console.printSucc("Enabled GL_BLEND!", GL11.GL_BLEND);
+
+        GL33.glBlendFunc(GL33.GL_SRC_ALPHA, GL33.GL_ONE_MINUS_SRC_ALPHA);
+
+        //Create a new NuklearUtils Object!
+        nuklearUtils = new NuklearUtils(this);
+
+        //Create a new Input Instance to handle Input!
+        input = new Input(nuklearUtils);
+
+        nuklearUtils.setupContext();
+        nuklearUtils.setupFont();
 
         //Create Input callbacks!
-        Console.printDebug("Creating callbacks...", null);
         createCallbacks();
-        Console.printSucc("Callbacks created!", true);
 
-        //Set FPS to V-Sync (60) if val is "1"!
-        Console.printDebug("Setting the Buffer swap interval...", swapInterval);
-        GLFW.glfwSwapInterval(swapInterval);
-        Console.printSucc("Set the Buffer swap interval!", swapInterval);
+        //Set FPS to V-Sync (60 fps)
+        GLFW.glfwSwapInterval(vsync ? 1 : 0);
 
         //Show the current GLFW window to the USER!
-        Console.printDebug("Setting window to show on screen...", window);
         GLFW.glfwShowWindow(window);
-        Console.printSucc("Window Class successfully created!", true);
     }
 
-    /**
-     * Sets up and registers all necessary GLFW callbacks for the window.
-     * This includes a custom {@link GLFWWindowSizeCallback} to handle window resizing
-     * and delegates other input callbacks to the {@link Input} instance.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     private void createCallbacks() {
         //Creates a callback for the resizing of the window!
         sizeCallback = new GLFWWindowSizeCallback() {
-            /**
-             * Invoked when the window is resized. Updates the window's dimensions and
-             * marks it as resized if not in fullscreen mode.
-             * @param window The window that was resized.
-             * @param newWidth The new width of the window.
-             * @param newHeight The new height of the window.
-             */
             @Override
             public void invoke(long window, int newWidth, int newHeight) {
                 if (!isFullscreen) {
@@ -231,25 +205,26 @@ public class Window {
         GLFW.glfwSetMouseButtonCallback(window, input.getMouseButtonsCallback());
         GLFW.glfwSetScrollCallback(window, input.getMouseScrollCallback());
         GLFW.glfwSetWindowSizeCallback(window, sizeCallback);
+        GLFW.glfwSetCharCallback(window, input.getCharCallback());
     }
 
-    /**
-     * Updates the projection matrix based on the current window dimensions and
-     * camera field of view (FOV), near plane, and far plane values from {@link UserData}.
-     * This method is called upon window creation and every time the window is resized.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     private void updateProjectionMatrix() {
         projectionMatrix = Matrix4f.projection(UserData.FOV, (float) width / (float) height, UserData.CAMERA_NEAR, UserData.CAMERA_FAR);
     }
 
-    /**
-     * Performs per-frame updates for the window. This includes updating the projection matrix,
-     * adjusting the OpenGL viewport if the window was resized, setting the clear color,
-     * clearing the color and depth buffers, and polling GLFW events.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void update() {
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+
+            glfwGetWindowSize(window, w, h);
+            width = w.get(0);
+            height = h.get(0);
+
+            glfwGetFramebufferSize(window, w, h);
+            monitorWidth = w.get(0);
+            monitorHeight = h.get(0);
+        }
         //Update the GL11 Viewport if the window is Resized!
         updateProjectionMatrix(); // Re-calculate projection matrix, even if not explicitly resized, for consistency
         if (isResized) {
@@ -269,39 +244,20 @@ public class Window {
 
         //Processes events that it already happened and does not wait! Other Option could be waiting
         //GLFW.glfwWaitEvents();
-        GLFW.glfwPollEvents();
+
+        nuklearUtils.newFrame();
     }
 
-    /**
-     * Swaps the front and back buffers of the window. This makes the content rendered
-     * to the back buffer visible on the screen. This should be called after all
-     * rendering commands for the current frame have been issued.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void swapBuffers() {
         //Swaps the buffers!
         GLFW.glfwSwapBuffers(window);
     }
 
-    /**
-     * Checks if the window should close. This flag is typically set when the user
-     * clicks the close button or an application-defined exit condition is met.
-     *
-     * @return {@code true} if the window close flag is set, {@code false} otherwise.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public boolean shouldClose() {
         //Returns a boolean that says if the window should be closed!
         return GLFW.glfwWindowShouldClose(window);
     }
 
-    /**
-     * Destroys all resources associated with the window and GLFW.
-     * This includes freeing input callbacks, destroying the GLFW window itself,
-     * and terminating the GLFW library. This method should be called during
-     * application shutdown to prevent resource leaks.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void destroy() {
         //Destroys any Data that isn't needed after the windows closes!
         input.destroy();
@@ -313,14 +269,6 @@ public class Window {
         GLFW.glfwTerminate();
     }
 
-    /**
-     * Attempts to synchronize the game loop to a target Frames Per Second (FPS).
-     * It introduces a small delay to ensure the loop does not run faster than the specified FPS.
-     *
-     * @param loopStartTime The system time (e.g., from {@link GLFW#glfwGetTime()}) at the start of the current loop iteration.
-     * @param fps           The target Frames Per Second to synchronize to.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void sync(double loopStartTime, int fps) {
         float loopSlot = 1.0f / fps;
         double endTime = loopStartTime + loopSlot;
@@ -333,87 +281,24 @@ public class Window {
         }
     }
 
-    /**
-     * Controls the state of the mouse cursor within the GLFW window.
-     * This method can either disable (lock and hide) the cursor or set it back to normal (visible and movable).
-     *
-     * @param lock If {@code true}, the mouse cursor will be disabled (hidden and its movement
-     * will be locked to the window, providing infinite movement for camera controls, etc.).
-     * If {@code false}, the mouse cursor will revert to its normal state (visible and freely movable).
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void mouseState(boolean lock) {
         GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, lock ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
     }
 
-    /**
-     * Sets the background clear color for the window. This color will be used
-     * when {@link GL11#glClear(int)} is called with {@link GL11#GL_COLOR_BUFFER_BIT}.
-     *
-     * @param r The red component (0.0-1.0).
-     * @param g The green component (0.0-1.0).
-     * @param b The blue component (0.0-1.0).
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void setBackgroundColor(float r,float g,float b) {backgroundColor.set(r, g, b);}
 
-    /**
-     * Retrieves the current background clear color of the window.
-     *
-     * @return A {@link Vector3f} representing the RGB background color (0.0-1.0).
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public Vector3f getBackgroundColor() {return backgroundColor;}
 
-    /**
-     * Retrieves the current width of the window.
-     *
-     * @return The width of the window in pixels.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public int getWidth() {return width;}
 
-    /**
-     * Retrieves the current height of the window.
-     *
-     * @return The height of the window in pixels.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public int getHeight() {return height;}
 
-    /**
-     * Retrieves the title of the window.
-     *
-     * @return The string title of the window.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public String getTitle() {return title;}
 
-    /**
-     * Retrieves the raw GLFW window handle.
-     *
-     * @return The long GLFW window handle.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public long getWindow() {return window;}
 
-    /**
-     * Checks if the window is currently in fullscreen mode.
-     *
-     * @return {@code true} if the window is in fullscreen, {@code false} otherwise.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public boolean isIsFullscreen() {return isFullscreen;}
 
-    /**
-     * Sets the fullscreen mode of the window.
-     * When entering fullscreen, the window's current position is saved, and it's moved
-     * to the monitor with the largest overlap. When exiting fullscreen, it's restored
-     * to its original position and size. This also flags the window as resized.
-     *
-     * @param isFullscreen {@code true} to enter fullscreen, {@code false} to exit fullscreen.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public void setIsFullscreen(boolean isFullscreen) {
         this.isFullscreen = isFullscreen;
         isResized = true; // Always flag as resized to ensure viewport update
@@ -428,14 +313,6 @@ public class Window {
         }
     }
 
-    /**
-     * Determines the primary monitor that the window currently overlaps with the most.
-     * This is useful for placing the window in fullscreen mode on the most relevant display.
-     * It iterates through all available monitors and calculates the overlap area.
-     *
-     * @return The GLFW monitor handle of the monitor with the largest overlap, or 0 if no monitors are found or an error occurs.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public long getCurrentOverlapMonitor() {
         PointerBuffer monitors = GLFW.glfwGetMonitors();
         if (monitors == null) {
@@ -484,28 +361,20 @@ public class Window {
                     maxOverlap = overlapArea;
                     bestMonitor = monitor;
                 }
-            } catch (Error e) { // Catch java.lang.Error for issues like stack overflow from JNI calls
+            } catch (Error e) {
                 Console.printError("Could not get monitor overlap data!", monitor);
             }
         }
         return bestMonitor;
     }
 
-
-    /**
-     * Retrieves the current Frames Per Second (FPS) as reported by {@link RunningData}.
-     *
-     * @return The current FPS value.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
     public int getCURRENT_FPS() {return RunningData.CURRENT_FPS;}
 
-    /**
-     * Retrieves the current projection matrix used for rendering.
-     * This matrix is updated whenever the window is resized.
-     *
-     * @return The {@link Matrix4f} representing the projection matrix.
-     * @author PixelJomi (Jomicraft) / Jonas
-     */
+    public int getMonitorWidth() {return monitorWidth;}
+
+    public int getMonitorHeight() {return monitorHeight;}
+
+    public NuklearUtils getNuklearUtils() {return nuklearUtils;}
+
     public Matrix4f getProjectionMatrix() {return projectionMatrix;}
 }
