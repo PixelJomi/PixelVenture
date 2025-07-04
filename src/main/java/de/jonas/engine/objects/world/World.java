@@ -10,6 +10,8 @@ import de.jonas.engine.objects.game.GameObject;
 import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.utils.Console;
 
+//TODO Important: Set the offset of the rendering of a chunk not via the mesh but via the gameObject to keep it consistent. ;)
+
 public class World {
     private Chunk[][] chunks = new Chunk[getChunkAmountDiameter()][getChunkAmountDiameter()];
 

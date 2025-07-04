@@ -17,15 +17,15 @@ import java.util.ArrayList;
 
 public class ChunkSection {
     private short sectionHeight;
-    private Vector2f chunkPos;
+    private Chunk parrentChunk;
     private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     private ArrayList<Integer> indices = new ArrayList<Integer>();
     private Voxel[][][] voxels = new Voxel[PVData.SECTION_SIZE][PVData.SECTION_SIZE][PVData.SECTION_SIZE];
     private Mesh mesh;
 
-    public ChunkSection(Vector2f chunkPos, short sectionHeight) {
+    public ChunkSection(Chunk parrentChunk, short sectionHeight) {
         this.sectionHeight = sectionHeight;
-        this.chunkPos = chunkPos;
+        this.parrentChunk = parrentChunk;
         generateVoxels();
     }
 
@@ -54,6 +54,7 @@ public class ChunkSection {
                                     addFace(Default.DEFAULT_VOXEL_VERTICES_RIGHT, Default.DEFAULT_VOXEL_INDICES_RIGHT, new Vector3f(x,y,z));
                                 }
                             } else {
+                                //Do a check for the "next door" chunk.
                                 addFace(Default.DEFAULT_VOXEL_VERTICES_RIGHT, Default.DEFAULT_VOXEL_INDICES_RIGHT, new Vector3f(x,y,z));
                             }
 
@@ -62,6 +63,7 @@ public class ChunkSection {
                                     addFace(Default.DEFAULT_VOXEL_VERTICES_LEFT, Default.DEFAULT_VOXEL_INDICES_LEFT, new Vector3f(x,y,z));
                                 }
                             } else {
+                                //Do a check for the "next door" chunk.
                                 addFace(Default.DEFAULT_VOXEL_VERTICES_LEFT, Default.DEFAULT_VOXEL_INDICES_LEFT, new Vector3f(x,y,z));
                             }
 
@@ -70,6 +72,7 @@ public class ChunkSection {
                                     addFace(Default.DEFAULT_VOXEL_VERTICES_TOP, Default.DEFAULT_VOXEL_INDICES_TOP, new Vector3f(x, y, z));
                                 }
                             } else {
+                                //Do a check for the "next door" chunk.
                                 addFace(Default.DEFAULT_VOXEL_VERTICES_TOP, Default.DEFAULT_VOXEL_INDICES_TOP, new Vector3f(x, y, z));
                             }
 
@@ -78,6 +81,7 @@ public class ChunkSection {
                                     addFace(Default.DEFAULT_VOXEL_VERTICES_BOTTOM, Default.DEFAULT_VOXEL_INDICES_BOTTOM, new Vector3f(x,y,z));
                                 }
                             } else {
+                                //Do a check for the "next door" chunk.
                                 addFace(Default.DEFAULT_VOXEL_VERTICES_BOTTOM, Default.DEFAULT_VOXEL_INDICES_BOTTOM, new Vector3f(x,y,z));
                             }
 
@@ -86,6 +90,7 @@ public class ChunkSection {
                                     addFace(Default.DEFAULT_VOXEL_VERTICES_FRONT, Default.DEFAULT_VOXEL_INDICES_FRONT, new Vector3f(x, y, z));
                                 }
                             } else {
+                                //Do a check for the "next door" chunk.
                                 addFace(Default.DEFAULT_VOXEL_VERTICES_FRONT, Default.DEFAULT_VOXEL_INDICES_FRONT, new Vector3f(x, y, z));
                             }
 
@@ -94,6 +99,7 @@ public class ChunkSection {
                                     addFace(Default.DEFAULT_VOXEL_VERTICES_BACK, Default.DEFAULT_VOXEL_INDICES_BACK, new Vector3f(x,y,z));
                                 }
                             } else {
+                                //Do a check for the "next door" chunk.
                                 addFace(Default.DEFAULT_VOXEL_VERTICES_BACK, Default.DEFAULT_VOXEL_INDICES_BACK, new Vector3f(x,y,z));
                             }
 
@@ -127,7 +133,8 @@ public class ChunkSection {
     }
 
     public void render(Renderer renderer, Player player) {
-        GameObject sectionObject = new GameObject(new Vector3f(0,0,0),new Vector3f(0,0,0),new Vector3f(1,1,1),mesh);
+        Vector3f pos = new Vector3f(parrentChunk.getChunkPos().getX() * PVData.SECTION_SIZE,sectionHeight * PVData.SECTION_SIZE,parrentChunk.getChunkPos().getY() * PVData.SECTION_SIZE);
+        GameObject sectionObject = new GameObject(pos,mesh);
         renderer.renderGameObject(sectionObject,player.getCamera());
     }
 
@@ -139,8 +146,6 @@ public class ChunkSection {
     }
 
     private void addFace(Vertex[] faceVerticesTemplate, int[] faceIndicesTemplate, Vector3f voxelPosition) {
-        voxelPosition.add(chunkPos.getX() * PVData.SECTION_SIZE,sectionHeight * PVData.SECTION_SIZE,chunkPos.getY() * PVData.SECTION_SIZE);
-
         int baseVertexIndex = this.vertices.size();
 
         for (int i = 0; i < faceVerticesTemplate.length; i++) {

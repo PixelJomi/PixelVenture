@@ -16,6 +16,20 @@ public class GameObject {
         this.mesh = mesh;
     }
 
+    public GameObject(Vector3f position, Vector3f rotation, Mesh mesh) {
+        this.position = position;
+        this.rotation = rotation;
+        this.scale = new Vector3f(1,1,1);
+        this.mesh = mesh;
+    }
+
+    public GameObject(Vector3f position, Mesh mesh) {
+        this.position = position;
+        this.rotation = new Vector3f(0,0,0);
+        this.scale = new Vector3f(1,1,1);
+        this.mesh = mesh;
+    }
+
     public  void update() {
 
     }

@@ -22,7 +22,7 @@ public class Chunk {
 
     public void generateSections() {
         for (int i = 0;i < chunkSections.length;i++){
-            chunkSections[i] = new ChunkSection(chunkPos,(short) i);
+            chunkSections[i] = new ChunkSection(this,(short) i);
         }
     }
 

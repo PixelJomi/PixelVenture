@@ -7,6 +7,11 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
+import org.lwjgl.nuklear.NkVec2;
+import org.lwjgl.system.MemoryStack;
+
+import static org.lwjgl.nuklear.Nuklear.nk_input_scroll;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 /**
  * Handles all user input (keyboard, mouse movement, mouse buttons, and scroll)
@@ -139,6 +144,7 @@ public class Input {
                 scrollX += offsetX;
                 scrollY += offsetY;
             }
+
         };
         Console.printSucc("Finished setting up input handler for mouse scroll!", true);
     }
