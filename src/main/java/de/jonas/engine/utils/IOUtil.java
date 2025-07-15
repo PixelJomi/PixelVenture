@@ -10,6 +10,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public final class IOUtil {
 
+    //TODO Put this into FileUtils or a similar class
+
     private IOUtil() {
     }
 
