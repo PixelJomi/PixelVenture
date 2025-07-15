@@ -1,12 +1,12 @@
 package de.jonas.engine.utils;
 
-import de.jonas.engine.data.RunningData;
+import de.jonas.engine.data.DynamicData;
 
 /**
  * A utility class for tracking and managing engine performance metrics,
  * specifically Ticks Per Second (TPS) and Frames Per Second (FPS).
  * This class provides methods to update these counters, which are then
- * exposed via the {@link RunningData} class.
+ * exposed via the {@link DynamicData} class.
  *
  * @author PixelJomi (Jomicraft) / Jonas
  */
@@ -34,7 +34,7 @@ public class PerformanceUtils {
 
     /**
      * Increments the internal tick counter. Every second, this method calculates
-     * the current Ticks Per Second (TPS) and stores it in {@link RunningData#CURRENT_TPS},
+     * the current Ticks Per Second (TPS) and stores it in {@link DynamicData#CURRENT_TPS},
      * then resets the tick counter.
      * This method should be called once per game tick.
      * @author PixelJomi (Jomicraft) / Jonas
@@ -43,14 +43,14 @@ public class PerformanceUtils {
         ticks++;
         if (System.currentTimeMillis() > TPSTime + 1000) {
             TPSTime = System.currentTimeMillis();
-            RunningData.CURRENT_TPS = ticks;
+            DynamicData.CURRENT_TPS = ticks;
             ticks = 0;
         }
     }
 
     /**
      * Increments the internal frame counter. Every second, this method calculates
-     * the current Frames Per Second (FPS) and stores it in {@link RunningData#CURRENT_FPS},
+     * the current Frames Per Second (FPS) and stores it in {@link DynamicData#CURRENT_FPS},
      * then resets the frame counter.
      * This method should be called once per frame rendered.
      * @author PixelJomi (Jomicraft) / Jonas
@@ -62,7 +62,7 @@ public class PerformanceUtils {
         if (System.currentTimeMillis() > FPSTime + 1000) {
             // Updates the Time var to the current time in milliseconds!
             FPSTime = System.currentTimeMillis();
-            RunningData.CURRENT_FPS = frames;
+            DynamicData.CURRENT_FPS = frames;
             // Sets the Frames back to zero!
             frames = 0;
         }

@@ -1,5 +1,6 @@
 package de.jonas.main;
 
+import de.jonas.engine.data.JSONData;
 import de.jonas.engine.graphics.*;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
@@ -8,9 +9,10 @@ import de.jonas.engine.objects.Scene;
 import de.jonas.engine.objects.world.World;
 import de.jonas.engine.ui.debug.DebugUI;
 import de.jonas.engine.utils.Console;
+import de.jonas.engine.utils.MainThreadExecutor;
 import de.jonas.engine.utils.PerformanceUtils;
-import de.jonas.engine.data.PVData;
-import de.jonas.engine.data.RunningData;
+import de.jonas.engine.data.StaticData;
+import de.jonas.engine.data.DynamicData;
 import de.jonas.engine.data.UserData;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -58,10 +60,11 @@ public class Main implements Runnable{
             tACCUMULATOR += tDELTA;
             checkInput();
             while (tACCUMULATOR > tSLICE) {
-                if (RunningData.GAME_TIME >= 24000) {RunningData.GAME_TIME = 0;}
+                if (DynamicData.GAME_TIME >= 24000) {
+                    DynamicData.GAME_TIME = 0;}
                 update();
                 tACCUMULATOR -= tSLICE;
-                RunningData.GAME_TIME += 1;
+                DynamicData.GAME_TIME += 1;
             }
             //TODO Update Player movement to be consistent.
             scene.update();
@@ -72,15 +75,15 @@ public class Main implements Runnable{
     }
 
     public void init() {
-        UserData.loadData();
+        UserData.loadData(new JSONData());
         Console.printDebug("Initializing game...",null);
-        window = new Window(UserData.START_WIDTH, UserData.START_HEIGHT, PVData.GAME_NAME);
+        window = new Window(UserData.START_WIDTH, UserData.START_HEIGHT, StaticData.GAME_NAME);
         shader = new Shader("shader/mainVertex.glsl", "shader/mainFragment.glsl");
 
         window.create(UserData.VSYNC);
         shader.create();
 
-        scene = new Scene(new Vector3f(0,0,0),window,shader);
+        scene = new Scene(new Vector3f(0,32,-2),window,shader);
         scene.reload();
 
         //TODO Remove once main menu is in place!
@@ -90,17 +93,19 @@ public class Main implements Runnable{
 
     private void checkInput() {
         if (Input.isKeyToggledUp(GLFW.GLFW_KEY_F11)) window.setIsFullscreen(!window.isIsFullscreen());
-        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !RunningData.DEBUG_GUI) window.mouseState(true);
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !DynamicData.DEBUG_GUI) window.mouseState(true);
         if (Input.isKeyToggledUp(GLFW.GLFW_KEY_RIGHT_SHIFT)) scene.test();
-        if (Input.isKeyToggledUp(GLFW.GLFW_KEY_LEFT_ALT)) {
-            RunningData.DEBUG_GUI = !RunningData.DEBUG_GUI;
-            window.mouseState(RunningData.DEBUG_GUI ? false : true);
+        if (Input.isKeyToggledUp(GLFW.GLFW_KEY_LEFT_ALT) && UserData.DEBUG) {
+            DynamicData.DEBUG_GUI = !DynamicData.DEBUG_GUI;
+            window.mouseState(DynamicData.DEBUG_GUI ? false : true);
         }
     }
 
     private void update() {
         PerformanceUtils.updateTPS();
-        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + RunningData.CURRENT_FPS + " | TPS: " + RunningData.CURRENT_TPS);
+        GLFW.glfwSetWindowTitle(window.getWindow(),window.getTitle() + " | FPS: " + DynamicData.CURRENT_FPS + " | TPS: " + DynamicData.CURRENT_TPS);
+        MainThreadExecutor.executeAll();
+        scene.reload();
     }
 
     private void render() {
@@ -109,7 +114,7 @@ public class Main implements Runnable{
 
         scene.render();
 
-        if (RunningData.DEBUG_GUI) {
+        if (DynamicData.DEBUG_GUI) {
             debugUI.layout(window.nuklearUtils.getCtx(), 50, 50,this);
             UserData.WIREFRAME = debugUI.wireframe;
         }

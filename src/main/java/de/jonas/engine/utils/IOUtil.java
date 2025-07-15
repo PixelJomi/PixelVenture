@@ -1,4 +1,4 @@
-package de.jonas.main;
+package de.jonas.engine.utils;
 
 /*
  * Copyright LWJGL. All rights reserved.

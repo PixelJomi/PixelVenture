@@ -1,22 +1,18 @@
 package de.jonas.engine.objects.world;
 
-import de.jonas.engine.data.PVData;
-import de.jonas.engine.graphics.Material;
-import de.jonas.engine.graphics.Mesh;
+import de.jonas.engine.data.StaticData;
 import de.jonas.engine.graphics.Renderer;
-import de.jonas.engine.graphics.Vertex;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.objects.game.player.Player;
-import de.jonas.engine.utils.BasicMeshData;
-
-import java.util.ArrayList;
 
 public class Chunk {
     private Vector2f chunkPos;
-    private ChunkSection[] chunkSections = new ChunkSection[PVData.CHUNK_SECTION_AMOUNT];
+    private ChunkSection[] chunkSections = new ChunkSection[StaticData.CHUNK_SECTION_AMOUNT];
+    private World parrentWorld;
 
-    public Chunk(Vector2f chunkPos) {
+    public Chunk(Vector2f chunkPos, World parrentWorld) {
         this.chunkPos = chunkPos;
+        this.parrentWorld = parrentWorld;
         generateSections();
     }
 
@@ -25,13 +21,6 @@ public class Chunk {
             chunkSections[i] = new ChunkSection(this,(short) i);
         }
     }
-
-    public void reloadMeshes() {
-        for (int i = 0;i < chunkSections.length;i++){
-            chunkSections[i].generateMesh();
-        }
-    }
-
 
     public void render(Renderer renderer, Player player) {
         for (int i = 0;i < chunkSections.length;i++){
@@ -42,12 +31,13 @@ public class Chunk {
         }
     }
 
-
     public void destroy() {
         for (int i = 0;i < chunkSections.length;i++){
             chunkSections[i].destroy();
         }
     }
+
+    public World getParrentWorld() {return parrentWorld;}
 
     public ChunkSection getChunkSection(int sectionHeight) {return chunkSections[sectionHeight];}
 

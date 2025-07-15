@@ -39,9 +39,7 @@ public class DebugUI {
                 nk_layout_row_static(ctx, 30, 80, 1);
                 if (nk_button_label(ctx, "ReloadChunks")) {
                     Console.printDebug("TestButton pressed!", true);
-                    main.scene.reload();
                 }
-
 
                 nk_layout_row_dynamic(ctx, 30, 3);
                 nk_label(ctx, "RenderMode: ", NK_TEXT_LEFT);
@@ -51,11 +49,6 @@ public class DebugUI {
                 if (nk_option_label(ctx, "Wireframe", wireframe)) {
                     wireframe = true;
                 }
-
-                nk_layout_row_dynamic(ctx, 25, 1);
-                nk_property_int(ctx, "Compression:", 0, compression, 100, 10, 1);
-
-                // Color Picker ist noch auskommentiert – kannst du aktivieren, wenn du willst
             }
 
             nk_end(ctx);

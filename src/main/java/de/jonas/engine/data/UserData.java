@@ -19,20 +19,18 @@ public class UserData {
     public static boolean WIREFRAME = false;
     public static float MOUSE_SENSITIVITY = 0.05f;
 
-    public static void loadData() {
-        JSONObject settingsJSONFile = JSONUtils.getJSONFile("data/settings.json");
-        DEBUG = ObjectUtils.objectToBoolean(JSONUtils.getObjectFromJSON(settingsJSONFile,"dev.debug"), DEBUG);
-        FPS = ObjectUtils.objectToInteger(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.fps"),FPS);
-        VSYNC = ObjectUtils.objectToBoolean(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.window.vsync"),VSYNC);
-        RENDER_DISTANCE = ObjectUtils.objectToInteger(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.render_distance"),RENDER_DISTANCE);
-        FOV = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.camera.fov"),FOV);
-        START_WIDTH = ObjectUtils.objectToInteger(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.window.startWidth"),START_WIDTH);
-        START_HEIGHT = ObjectUtils.objectToInteger(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.window.startHeight"),START_HEIGHT);
-        CAMERA_NEAR = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.camera.cameraNear"),CAMERA_NEAR);
-        CAMERA_FAR = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.render.camera.cameraFar"),CAMERA_FAR);
-        WIREFRAME = ObjectUtils.objectToBoolean(JSONUtils.getObjectFromJSON(settingsJSONFile,"dev.wireframe"),WIREFRAME);
-        MOUSE_SENSITIVITY = ObjectUtils.objectToFloat(JSONUtils.getObjectFromJSON(settingsJSONFile,"client.input.mouseSensitivity"),MOUSE_SENSITIVITY);
-
+    public static void loadData(JSONData jsonData) {
+        DEBUG = jsonData.settings.dev.debug;
+        FPS = jsonData.settings.client.render.fps;
+        VSYNC = jsonData.settings.client.window.vsync;
+        RENDER_DISTANCE = jsonData.settings.client.render.render_distance;
+        FOV = jsonData.settings.client.render.camera.fov;
+        START_WIDTH = jsonData.settings.client.window.startWidth;
+        START_HEIGHT = jsonData.settings.client.window.startHeight;
+        CAMERA_NEAR = jsonData.settings.client.render.camera.cameraNear;
+        CAMERA_FAR = jsonData.settings.client.render.camera.cameraFar;
+        WIREFRAME = jsonData.settings.dev.wireframe;
+        MOUSE_SENSITIVITY = jsonData.settings.client.input.mouseSensitivity;
 
         //DON'T REMOVE IG JUST DEBUG STUFF...
         Console.printSucc("Values initialized!",null);

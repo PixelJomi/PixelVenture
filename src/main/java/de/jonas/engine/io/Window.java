@@ -2,62 +2,34 @@ package de.jonas.engine.io;
 
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector3f;
-import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.utils.Console;
-import de.jonas.engine.data.PVData;
-import de.jonas.engine.data.RunningData;
+import de.jonas.engine.data.StaticData;
+import de.jonas.engine.data.DynamicData;
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.utils.NuklearUtils;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.nuklear.NkAllocator;
-import org.lwjgl.nuklear.NkContext;
-import org.lwjgl.nuklear.NkDrawVertexLayoutElement;
-import org.lwjgl.nuklear.NkVec2;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.Platform;
 
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-import static org.lwjgl.nuklear.Nuklear.*;
-import static org.lwjgl.nuklear.Nuklear.nnk_strlen;
 import static org.lwjgl.opengl.ARBDebugOutput.*;
 import static org.lwjgl.opengl.ARBDebugOutput.GL_DEBUG_SEVERITY_LOW_ARB;
-import static org.lwjgl.opengl.GL11C.GL_FLOAT;
-import static org.lwjgl.opengl.GL11C.GL_NEAREST;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL11C.GL_RGBA8;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11C.GL_TRUE;
-import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11C.glBindTexture;
 import static org.lwjgl.opengl.GL11C.glGenTextures;
 import static org.lwjgl.opengl.GL11C.glTexImage2D;
-import static org.lwjgl.opengl.GL11C.glTexParameteri;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
-import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
 import static org.lwjgl.opengl.GL20C.*;
 import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30C.glBindVertexArray;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
     private long window;
@@ -70,7 +42,7 @@ public class Window {
     private int[] windowPosX = new int[1];
     private int[] windowPosY = new int[1];
 
-    private Vector3f backgroundColor = PVData.DEFAULT_BACKGROUND_COLOR;
+    private Vector3f backgroundColor = StaticData.DEFAULT_BACKGROUND_COLOR;
     private GLFWWindowSizeCallback sizeCallback;
     private Matrix4f projectionMatrix;
 
@@ -368,7 +340,7 @@ public class Window {
         return bestMonitor;
     }
 
-    public int getCURRENT_FPS() {return RunningData.CURRENT_FPS;}
+    public int getCURRENT_FPS() {return DynamicData.CURRENT_FPS;}
 
     public int getMonitorWidth() {return monitorWidth;}
 

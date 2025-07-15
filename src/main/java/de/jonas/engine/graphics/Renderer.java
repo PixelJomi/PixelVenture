@@ -3,6 +3,7 @@ package de.jonas.engine.graphics;
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Matrix4f;
+import de.jonas.engine.objects.game.MeshObject;
 import de.jonas.engine.objects.game.player.Camera;
 import de.jonas.engine.objects.game.GameObject;
 import org.lwjgl.opengl.GL11;
@@ -19,7 +20,9 @@ public class Renderer {
         this.window = window;
     }
 
-    public void renderGameObject(GameObject object, Camera camera) {
+    public void renderGameObject(MeshObject object, Camera camera) {
+        if (object.getMesh() == null) return;
+        if (camera == null) return;
         GL30.glBindVertexArray(object.getMesh().getVAO());
         GL30.glEnableVertexAttribArray(0);
         GL30.glEnableVertexAttribArray(1);

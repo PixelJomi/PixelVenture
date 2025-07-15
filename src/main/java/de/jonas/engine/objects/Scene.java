@@ -1,14 +1,10 @@
 package de.jonas.engine.objects;
 
-import de.jonas.engine.data.UserData;
 import de.jonas.engine.graphics.Renderer;
 import de.jonas.engine.graphics.Shader;
 import de.jonas.engine.io.Window;
-import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.objects.game.player.Player;
-import de.jonas.engine.objects.world.Chunk;
-import de.jonas.engine.objects.world.Voxel;
 import de.jonas.engine.objects.world.World;
 import de.jonas.engine.utils.Console;
 
@@ -21,11 +17,10 @@ public class Scene {
     public Scene(Vector3f spawnPos, Window window, Shader defaultShader) {
         renderer = new Renderer(window,defaultShader);
         player = new Player(spawnPos,new Vector3f(0,0,0));
-        world.reloadChunks();
+        world.regenerateChunks();
     }
 
-    public void reload() {
-        //world.reloadChunks();
+    public void reload() { //TODO Rename to update once the player updating is fixed.
         world.reloadMeshes();
     }
 
@@ -44,12 +39,19 @@ public class Scene {
 
     public void test() {
         Console.printDebug("Running scene test...",true);
-        try {
-            world.setVoxel(player.getPosition(),"air");
-        } catch (Exception e) {
-            Console.printWarn("Could not place block!",player.getPosition());
+        for (int x = 0;x < 5;x++) {
+            for (int y = 0;y < 5;y++) {
+                for (int z = 0;z < 5;z++) {
+                    try {
+                        world.setVoxel(Vector3f.add(player.getPosition(),new Vector3f(x,y,z)),"air");
+                    } catch (Exception e) {
+                        Console.printWarn("Could not place block!",player.getPosition());
+                    }
+                }
+            }
         }
-        reload();
+
+        //reload();
     }
 
 
