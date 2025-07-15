@@ -1,17 +1,9 @@
 package de.jonas.engine.utils;
-
-/*
- * Copyright LWJGL. All rights reserved.
- * License terms: https://www.lwjgl.org/license
- */
-
 import org.lwjgl.*;
 
 import java.io.*;
-import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
-import java.nio.file.*;
 
 import static org.lwjgl.BufferUtils.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -28,50 +20,29 @@ public final class IOUtil {
         return newBuffer;
     }
 
-    /**
-     * Reads the specified resource and returns the raw data as a ByteBuffer.
-     *
-     * @param resource   the resource to read
-     * @param bufferSize the initial buffer size
-     *
-     * @return the resource data
-     *
-     * @throws IOException if an IO error occurs
-     */
-    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
-        ByteBuffer buffer;
-
-        Path path = resource.startsWith("http") ? null : Paths.get(resource);
-        if (path != null && Files.isReadable(path)) {
-            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
-                while (fc.read(buffer) != -1) {
-                    ;
-                }
+    public static ByteBuffer ioResourceToByteBuffer(String resourcePath, int bufferSize) throws IOException {
+        try (InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (source == null) {
+                throw new FileNotFoundException("Resource not found in classpath: " + resourcePath);
             }
-        } else {
-            try (
-                    InputStream source = resource.startsWith("http")
-                            ? new URL(resource).openStream()
-                            : IOUtil.class.getClassLoader().getResourceAsStream(resource);
-                    ReadableByteChannel rbc = Channels.newChannel(source)
-            ) {
-                buffer = createByteBuffer(bufferSize);
+
+            try (ReadableByteChannel rbc = Channels.newChannel(source)) {
+                ByteBuffer buffer = createByteBuffer(bufferSize);
 
                 while (true) {
                     int bytes = rbc.read(buffer);
-                    if (bytes == -1) {
-                        break;
-                    }
+                    if (bytes == -1) break;
+
                     if (buffer.remaining() == 0) {
-                        buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
+                        buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // grow by 50%
                     }
                 }
+
+                buffer.flip();
+                return memSlice(buffer);
             }
         }
-
-        buffer.flip();
-        return memSlice(buffer);
     }
 
 }
+

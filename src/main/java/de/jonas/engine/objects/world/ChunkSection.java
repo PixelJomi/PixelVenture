@@ -201,7 +201,7 @@
                     indices.clear();
 
                     //TODO Add atlas texture rendering
-                    Mesh returnMesh = new Mesh(newVertices, newIndices, new Material("textures/testPic.png"));
+                    Mesh returnMesh = new Mesh(newVertices, newIndices, new Material("assets/pv/textures/testPic.png"));
                     MainThreadExecutor.runLater(() -> {
                         if (this.getMesh() != null) {this.getMesh().destroy();}
                         returnMesh.create();

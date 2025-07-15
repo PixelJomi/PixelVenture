@@ -185,7 +185,7 @@ public class NuklearUtils {
 
     public void setupFont() {
         try {
-            this.ttf = ioResourceToByteBuffer("font/FiraSans.ttf", 512 * 1024);
+            this.ttf = ioResourceToByteBuffer("assets/pv/font/FiraSans.ttf", 512 * 1024);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -78,7 +78,7 @@ public class Main implements Runnable{
         UserData.loadData(new JSONData());
         Console.printDebug("Initializing game...",null);
         window = new Window(UserData.START_WIDTH, UserData.START_HEIGHT, StaticData.GAME_NAME);
-        shader = new Shader("shader/mainVertex.glsl", "shader/mainFragment.glsl");
+        shader = new Shader("assets/pv/shader/mainVertex.glsl", "assets/pv/shader/mainFragment.glsl");
 
         window.create(UserData.VSYNC);
         shader.create();
