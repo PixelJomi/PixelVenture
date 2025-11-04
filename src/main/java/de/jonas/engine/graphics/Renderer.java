@@ -1,15 +1,15 @@
 package de.jonas.engine.graphics;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
+
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.objects.game.MeshObject;
 import de.jonas.engine.objects.game.player.Camera;
-import de.jonas.engine.objects.game.GameObject;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL30;
 
 public class Renderer {
     private Shader shader;

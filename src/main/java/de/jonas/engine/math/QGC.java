@@ -1,8 +1,5 @@
 package de.jonas.engine.math;
 
-import java.math.BigDecimal;
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * Implements a Quadratic Congruential Generator (QCG) for generating pseudorandom numbers.
  * A QCG is a type of pseudorandom number generator (PRNG) that calculates the next number

@@ -1,10 +1,6 @@
 package de.jonas.engine.data;
 
 import de.jonas.engine.utils.Console;
-import de.jonas.engine.utils.FileUtils;
-import de.jonas.engine.utils.JSONUtils;
-import de.jonas.engine.utils.ObjectUtils;
-import org.json.simple.JSONObject;
 
 public class UserData {
     public static int FPS = 120;

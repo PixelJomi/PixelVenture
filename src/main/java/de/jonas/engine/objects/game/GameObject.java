@@ -1,6 +1,5 @@
 package de.jonas.engine.objects.game;
 
-import de.jonas.engine.graphics.Mesh;
 import de.jonas.engine.math.Vector3f;
 
 public class GameObject {

@@ -1,35 +1,43 @@
 package de.jonas.engine.io;
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_DEBUG_CONTEXT;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import static org.lwjgl.opengl.ARBDebugOutput.GL_DEBUG_SEVERITY_LOW_ARB;
+import static org.lwjgl.opengl.ARBDebugOutput.GL_DEBUG_SOURCE_API_ARB;
+import static org.lwjgl.opengl.ARBDebugOutput.GL_DEBUG_TYPE_OTHER_ARB;
+import static org.lwjgl.opengl.ARBDebugOutput.glDebugMessageControlARB;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11C.glEnable;
+import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GL43;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
+import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
+import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.GLDebugMessageCallback;
+import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.opengl.KHRDebug;
+import org.lwjgl.system.Callback;
+import org.lwjgl.system.MemoryStack;
+import static org.lwjgl.system.MemoryStack.stackPush;
+
+import de.jonas.engine.data.DynamicData;
+import de.jonas.engine.data.StaticData;
+import de.jonas.engine.data.UserData;
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
-import de.jonas.engine.data.StaticData;
-import de.jonas.engine.data.DynamicData;
-import de.jonas.engine.data.UserData;
 import de.jonas.engine.utils.NuklearUtils;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.Callback;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.IntBuffer;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-import static org.lwjgl.opengl.ARBDebugOutput.*;
-import static org.lwjgl.opengl.ARBDebugOutput.GL_DEBUG_SEVERITY_LOW_ARB;
-import static org.lwjgl.opengl.GL11C.glGenTextures;
-import static org.lwjgl.opengl.GL11C.glTexImage2D;
-import static org.lwjgl.opengl.GL15C.glGenBuffers;
-import static org.lwjgl.opengl.GL20C.*;
-import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
-import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Window {
     private long window;

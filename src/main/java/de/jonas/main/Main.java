@@ -99,7 +99,7 @@ public class Main implements Runnable{
         if (Input.isKeyToggledUp(GLFW.GLFW_KEY_RIGHT_SHIFT)) scene.test();
         if (Input.isKeyToggledUp(GLFW.GLFW_KEY_LEFT_ALT) && UserData.DEBUG) {
             DynamicData.DEBUG_GUI = !DynamicData.DEBUG_GUI;
-            window.mouseState(DynamicData.DEBUG_GUI ? false : true);
+            window.mouseState(!DynamicData.DEBUG_GUI);
         }
     }
 
