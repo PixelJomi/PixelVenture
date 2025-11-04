@@ -1,7 +1,14 @@
 package de.jonas.main;
 
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import static org.lwjgl.nuklear.Nuklear.NK_ANTI_ALIASING_ON;
+
+import de.jonas.engine.data.DynamicData;
 import de.jonas.engine.data.JSONData;
-import de.jonas.engine.graphics.*;
+import de.jonas.engine.data.StaticData;
+import de.jonas.engine.data.UserData;
+import de.jonas.engine.graphics.Shader;
 import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Vector3f;
@@ -11,12 +18,6 @@ import de.jonas.engine.ui.debug.DebugUI;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.utils.MainThreadExecutor;
 import de.jonas.engine.utils.PerformanceUtils;
-import de.jonas.engine.data.StaticData;
-import de.jonas.engine.data.DynamicData;
-import de.jonas.engine.data.UserData;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import static org.lwjgl.nuklear.Nuklear.*;
 
 public class Main implements Runnable{
     public Thread game;
@@ -47,6 +48,7 @@ public class Main implements Runnable{
         game.start();
     }
 
+    @Override
     public void run() {
         GLFWErrorCallback.createPrint().set();
 
