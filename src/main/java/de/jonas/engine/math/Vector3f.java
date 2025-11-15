@@ -10,7 +10,6 @@ import java.util.Objects;
  *
  * @author PixelJomi (Jomicraft) / Jonas
  */
-@SuppressWarnings("all")
 public class Vector3f {
     //Variables
     private float x, y, z;

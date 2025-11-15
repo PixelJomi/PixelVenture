@@ -10,9 +10,9 @@ import de.jonas.engine.utils.Console;
 
 public class Scene {
 
-    private Renderer renderer;
-    private Player player;
-    private World world = new World();
+    private final Renderer renderer;
+    private final Player player;
+    private final World world = new World();
 
     public Scene(Vector3f spawnPos, Window window, Shader defaultShader) {
         renderer = new Renderer(window,defaultShader);

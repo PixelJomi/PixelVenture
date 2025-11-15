@@ -7,16 +7,15 @@ public class Face {
     private int[] indices = new int[6];
     private Voxel parrentVoxel;
 
-
-
     //TODO Add atlas texture! And fix this!
     public Face(Voxel parrentVoxel,String texture) {
         this.parrentVoxel = parrentVoxel;
     }
 
-
     public Vertex[] getVertices() {return vertices;}
     public int[] getIndices() {return indices;}
+    public Voxel getParrentVoxel() {return parrentVoxel;}
     public void setVertices(Vertex[] vertices) {this.vertices = vertices;}
     public void setIndices(int[] indices) {this.indices = indices;}
+    public void setParrentVoxel(Voxel parrentVoxel) {this.parrentVoxel = parrentVoxel;}
 }

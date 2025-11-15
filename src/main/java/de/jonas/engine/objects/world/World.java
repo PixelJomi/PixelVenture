@@ -1,5 +1,7 @@
 package de.jonas.engine.objects.world;
 
+import java.util.ArrayList;
+
 import de.jonas.engine.data.StaticData;
 import de.jonas.engine.data.UserData;
 import de.jonas.engine.graphics.Renderer;
@@ -9,11 +11,9 @@ import de.jonas.engine.objects.game.player.Player;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.utils.MainThreadExecutor;
 
-import java.util.ArrayList;
-
 public class World {
     private Chunk[][] chunks = new Chunk[getChunkAmountDiameter()][getChunkAmountDiameter()];
-    private ArrayList<ChunkSection> sectionsNeedingReload = new ArrayList<ChunkSection>();
+    private final ArrayList<ChunkSection> sectionsNeedingReload = new ArrayList<>();
 
     public void regenerateChunks() {
         chunks = new Chunk[getChunkAmountDiameter()][getChunkAmountDiameter()];
@@ -25,14 +25,18 @@ public class World {
     }
 
     public void reloadMeshes() {
-        if (sectionsNeedingReload.size() > 0) {
+        if (!sectionsNeedingReload.isEmpty()) {
             Console.printDebug("sectionsNeedingReload: ",sectionsNeedingReload.size());
+            if (sectionsNeedingReload instanceof ArrayList<ChunkSection>) {
+                ArrayList<ChunkSection> toReload = new ArrayList<>(sectionsNeedingReload);
+                sectionsNeedingReload.clear();
 
-            ArrayList<ChunkSection> toReload = (ArrayList<ChunkSection>) sectionsNeedingReload.clone();
-            sectionsNeedingReload.clear();
-            for (int ind = 0;ind < toReload.size();ind++) {toReload.get(ind).asyncGenerateMesh();}
-            toReload.clear();
-            MainThreadExecutor.executeAll();
+                for (ChunkSection chunkSection: toReload) {
+                    chunkSection.asyncGenerateMesh();
+                }
+                toReload.clear();
+                MainThreadExecutor.executeAll();
+            }
         }
     }
 

@@ -1,12 +1,12 @@
 package de.jonas.engine.utils;
 
-import de.jonas.engine.graphics.Vertex;
-
 import java.util.ArrayList;
 
+import de.jonas.engine.graphics.Vertex;
+
 public class BasicMeshData {
-    private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-    private ArrayList<Integer> indices = new ArrayList<Integer>();
+    private ArrayList<Vertex> vertices = new ArrayList<>();
+    private ArrayList<Integer> indices = new ArrayList<>();
 
     public BasicMeshData(ArrayList<Vertex> vertices,ArrayList<Integer> indices) {
         this.vertices = vertices;

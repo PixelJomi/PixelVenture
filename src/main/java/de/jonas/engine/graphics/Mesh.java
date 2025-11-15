@@ -13,7 +13,7 @@ public class Mesh {
     //Variables
     private Vertex[] vertices;
     private int[] indices;
-    private Material material;
+    private final Material material;
     private int vao, pbo, ibo, tbo;
     //Vertex Array Object (vao),
     //Position Buffer Object (vbo),
@@ -26,27 +26,22 @@ public class Mesh {
         this.indices = indices;
         this.material = material;
     }
+
     public void addMesh(Mesh meshTwo) {
         Vertex[] vertices1 = meshTwo.getVertices();
         Vertex[] mergedVertices = new Vertex[vertices.length + vertices1.length];
 
-        for (int i = 0; i < vertices.length; i++) {
-            mergedVertices[i] = vertices[i];
-        }
-        for (int i = 0; i < vertices1.length; i++) {
-            mergedVertices[vertices.length + i] = vertices1[i];
-        }
+        System.arraycopy(vertices, 0, mergedVertices, 0, vertices.length);
+        System.arraycopy(vertices1, 0, mergedVertices, vertices.length, vertices1.length);
+        
         vertices = mergedVertices;
 
         int[] indices1 = meshTwo.getIndices();
         int[] mergedIndices = new int[indices.length + indices1.length];
 
-        for (int i = 0; i < indices.length; i++) {
-            mergedIndices[i] = indices[i];
-        }
-        for (int i = 0; i < indices1.length; i++) {
-            mergedIndices[indices.length + i] = indices1[i];
-        }
+        System.arraycopy(indices, 0, mergedIndices, 0, indices.length);
+        System.arraycopy(indices1, 0, mergedIndices, indices.length, indices1.length);
+        
         indices = mergedIndices;
     }
 

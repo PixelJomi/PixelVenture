@@ -10,11 +10,11 @@ package de.jonas.engine.math;
  */
 public class QGC {
     private long currentSeed; // Xn
-    private long d;           // quadratic coefficient
-    private long a;           // linear coefficient
-    private long c;           // increment
-    private long m;           // modulus
-    private long minValue;    // Minimum value for the generated numbers
+    private final long d;           // quadratic coefficient
+    private final long a;           // linear coefficient
+    private final long c;           // increment
+    private final long m;           // modulus
+    private final long minValue;    // Minimum value for the generated numbers
 
     /**
      * Constructs a new Quadratic Congruential Generator (QCG) instance.

@@ -6,9 +6,9 @@ import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.objects.game.player.Player;
 
 public class Chunk {
-    private Vector2f chunkPos;
-    private ChunkSection[] chunkSections = new ChunkSection[StaticData.CHUNK_SECTION_AMOUNT];
-    private World parrentWorld;
+    private final Vector2f chunkPos;
+    private final ChunkSection[] chunkSections = new ChunkSection[StaticData.CHUNK_SECTION_AMOUNT];
+    private final World parrentWorld;
 
     public Chunk(Vector2f chunkPos, World parrentWorld) {
         this.chunkPos = chunkPos;
@@ -16,24 +16,25 @@ public class Chunk {
         generateSections();
     }
 
-    public void generateSections() {
+    public final void generateSections() {
         for (int i = 0;i < chunkSections.length;i++){
             chunkSections[i] = new ChunkSection(this,(short) i);
         }
     }
 
     public void render(Renderer renderer, Player player) {
-        for (int i = 0;i < chunkSections.length;i++){
+
+        for (ChunkSection chunkSection : chunkSections) {
             //TODO Add render check
             if (true) {
-                chunkSections[i].render(renderer,player);
+                chunkSection.render(renderer, player);
             }
         }
     }
 
     public void destroy() {
-        for (int i = 0;i < chunkSections.length;i++){
-            chunkSections[i].destroy();
+        for (ChunkSection chunkSection : chunkSections) {
+            chunkSection.destroy();
         }
     }
 

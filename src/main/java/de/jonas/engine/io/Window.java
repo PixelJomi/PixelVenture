@@ -1,6 +1,7 @@
 package de.jonas.engine.io;
 
 import java.nio.IntBuffer;
+import java.util.concurrent.locks.LockSupport;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
@@ -25,9 +26,7 @@ import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT;
 import static org.lwjgl.opengl.GL43.glDebugMessageCallback;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.opengl.GLDebugMessageCallback;
-import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.opengl.KHRDebug;
-import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
@@ -45,12 +44,12 @@ public class Window {
     private int monitorHeight;
     private int width;
     private int height;
-    private String title;
+    private final String title;
 
-    private int[] windowPosX = new int[1];
-    private int[] windowPosY = new int[1];
+    private final int[] windowPosX = new int[1];
+    private final int[] windowPosY = new int[1];
 
-    private Vector3f backgroundColor = StaticData.DEFAULT_BACKGROUND_COLOR;
+    private final Vector3f backgroundColor = StaticData.DEFAULT_BACKGROUND_COLOR;
     private GLFWWindowSizeCallback sizeCallback;
     private Matrix4f projectionMatrix;
 
@@ -111,7 +110,8 @@ public class Window {
 
         try {
             if (UserData.DEBUG) {
-                Callback debugProc = GLUtil.setupDebugMessageCallback();
+                //TODO Make this better :)
+                //Callback debugProc = GLUtil.setupDebugMessageCallback();
             }
         } catch (Exception e) {
             Console.printError("A error accrued while setting up GLDebugging.",false);
@@ -249,15 +249,24 @@ public class Window {
         GLFW.glfwTerminate();
     }
 
-    public void sync(double loopStartTime, int fps) {
-        float loopSlot = 1.0f / fps;
+    @SuppressWarnings("BusyWait")
+    public static void sync(double loopStartTime, int fps) {
+        double loopSlot = 1.0 / fps;        
         double endTime = loopStartTime + loopSlot;
-        while(GLFW.glfwGetTime() < endTime) {
+
+        long remainingNanos = (long) ((endTime - GLFW.glfwGetTime()) * 1_000_000_000);
+
+        while (remainingNanos > 2_000_000) {
             try {
-                Thread.sleep(1); // Sleep for 1 millisecond
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt(); // Restore the interrupted status
+                Thread.sleep(1); 
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
+            remainingNanos = (long) ((endTime - GLFW.glfwGetTime()) * 1_000_000_000);
+        }
+
+        while (GLFW.glfwGetTime() < endTime) {
+            LockSupport.parkNanos(1_000);
         }
     }
 
@@ -311,8 +320,6 @@ public class Window {
                 continue;
             }
             // Use monitor's current resolution for overlap calculation
-            int monitorWidth = vidMode.width();
-            int monitorHeight = vidMode.height();
 
             try (MemoryStack stack = stackPush()) {
                 IntBuffer monitorXPos = stack.mallocInt(1);
@@ -334,8 +341,8 @@ public class Window {
                 int windowHeight = heightBuffer.get(0);
 
                 // Calculate overlap area
-                int overlapArea = Math.max(0, Math.min(windowX + windowWidth, monitorX + monitorWidth) - Math.max(windowX, monitorX)) *
-                        Math.max(0, Math.min(windowY + windowHeight, monitorY + monitorHeight) - Math.max(windowY, monitorY));
+                int overlapArea = Math.max(0, Math.min(windowX + windowWidth, monitorX + vidMode.width()) - Math.max(windowX, monitorX)) *
+                        Math.max(0, Math.min(windowY + windowHeight, monitorY + vidMode.height()) - Math.max(windowY, monitorY));
 
                 if (overlapArea > maxOverlap) {
                     maxOverlap = overlapArea;

@@ -15,7 +15,7 @@ public class Matrix4f {
      * The dimension of the square matrix, representing a 4x4 matrix.
      */
     public static final int SIZE = 4;
-    private float[] elements = new float[SIZE * SIZE]; // Stores the 16 elements of the 4x4 matrix
+    private final float[] elements = new float[SIZE * SIZE]; // Stores the 16 elements of the 4x4 matrix
 
     //Matrices
     /**

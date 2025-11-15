@@ -13,6 +13,7 @@ import de.jonas.engine.io.Input;
 import de.jonas.engine.io.Window;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.objects.Scene;
+import de.jonas.engine.objects.world.ChunkSection;
 import de.jonas.engine.objects.world.World;
 import de.jonas.engine.ui.debug.DebugUI;
 import de.jonas.engine.utils.Console;
@@ -41,6 +42,7 @@ public class Main implements Runnable{
     public World world;
 
     public static void main(String[] args) {
+        System.out.println(Console.input("debugUI"));
         new Main().start();
     }
     public void start() {
@@ -71,7 +73,8 @@ public class Main implements Runnable{
             //TODO Update Player movement to be consistent.
             scene.update();
             render();
-            if (!UserData.VSYNC && UserData.FPS > 0) {window.sync(tNOW,UserData.FPS);}
+            if (!UserData.VSYNC && UserData.FPS > 0) {Window.sync(tNOW,UserData.FPS);}
+            
         }
         close();
     }
@@ -129,5 +132,6 @@ public class Main implements Runnable{
         window.destroy();
         scene.destroy();
         shader.destroy();
+        ChunkSection.getMeshThreadPool().shutdown();
     }
 }

@@ -12,8 +12,8 @@ import de.jonas.engine.objects.game.MeshObject;
 import de.jonas.engine.objects.game.player.Camera;
 
 public class Renderer {
-    private Shader shader;
-    private Window window;
+    private final Shader shader;
+    private final Window window;
 
     public Renderer(Window window, Shader shader) {
         this.shader = shader;

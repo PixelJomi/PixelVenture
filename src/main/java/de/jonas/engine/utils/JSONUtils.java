@@ -1,12 +1,12 @@
 package de.jonas.engine.utils;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * A utility class for working with JSON files, specifically for loading JSON content
@@ -63,27 +63,28 @@ public class JSONUtils {
 
         // Split the jsonPath into individual keys/segments
         String[] pathStrings = jsonPath.split("[.]");
-        Object object = null; // Initialize object to null
 
         // Iterate through each segment of the path
         for (int i = 0; i < pathStrings.length; i++) {
             // Attempt to get the object for the current path segment
-            object = jsonObject.get(pathStrings[i]);
+            Object value  = jsonObject.get(pathStrings[i]);
 
-            if (object == null) {
+            if (value  == null) {
                 // If a segment leads to null, the path is invalid or the value doesn't exist
                 Console.printError("Getting JSONObject of \"" + pathStrings[i] + "\" resulted in null.", jsonPath);
                 return null;
-            } else if (object instanceof JSONObject) {
+            }  
+
+            if (value instanceof JSONObject nestedObject) {
                 // If the current object is another JSONObject, continue traversing
-                jsonObject = (JSONObject) object;
+                jsonObject = nestedObject;
                 // If this is the last segment and it's a JSONObject, it means the path ended on an object
                 if (i == pathStrings.length - 1) {
                     return jsonObject;
                 }
             } else {
                 // If it's not a JSONObject and not null, it must be the final value
-                return object;
+                return value;
             }
         }
         // This point should ideally not be reached if the path leads to a value or an object.

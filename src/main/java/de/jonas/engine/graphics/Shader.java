@@ -1,19 +1,20 @@
 package de.jonas.engine.graphics;
 
+import java.nio.FloatBuffer;
+import java.nio.charset.Charset;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryUtil;
+
 import de.jonas.engine.math.Matrix4f;
 import de.jonas.engine.math.Vector2f;
 import de.jonas.engine.math.Vector3f;
 import de.jonas.engine.utils.Console;
 import de.jonas.engine.utils.FileUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.system.MemoryUtil;
-
-import java.nio.FloatBuffer;
-import java.nio.charset.Charset;
 
 public class Shader {
-    private String vertexFile,fragmentFile;
+    private final String vertexFile,fragmentFile;
     private int vertexID,fragmentID,programID;
 
     public Shader(String vertexPath, String fragmentPath) {
@@ -54,7 +55,6 @@ public class Shader {
         GL20.glValidateProgram(programID);
         if (GL20.glGetProgrami(programID, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
             Console.printError("Program validation failed! Error: " + GL20.glGetProgramInfoLog(programID),programID);
-            return;
         }
     }
 

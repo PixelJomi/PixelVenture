@@ -29,18 +29,16 @@ public class ObjectUtils {
      */
     public static boolean objectToBoolean(Object object, boolean defaultValue) {
         if (object == null) return defaultValue;
-        if (object instanceof Boolean) return (Boolean) object;
-        if (object instanceof String) {
-            String str = ((String) object).toLowerCase();
-            if (str.equals("true")) {
-                return true;
-            } else if (str.equals("false")) {
-                return false;
-            } else {
-                return defaultValue;
-            }
+        if (object instanceof Boolean aBoolean) return aBoolean;
+        if (object instanceof String string) {
+            String str = string.toLowerCase();
+            return switch (str) {
+                case "true" -> true;
+                case "false" -> false;
+                default -> defaultValue;
+            };
         }
-        if (object instanceof Number) return ((Number) object).intValue() > 0;
+        if (object instanceof Number number) return number.intValue() > 0;
         Console.printError("Cannot convert to boolean: " + object, object);
         return defaultValue;
     }
@@ -66,12 +64,10 @@ public class ObjectUtils {
      */
     public static int objectToInteger(Object object, int defaultValue) {
         if (object == null) return defaultValue;
-        if (object instanceof Number) {
-            return ((Number) object).intValue();
-        }
-        if (object instanceof String) {
+        if (object instanceof Number number) {return number.intValue();}
+        if (object instanceof String string) {
             try {
-                return Integer.parseInt((String) object);
+                return Integer.parseInt(string);
             } catch (NumberFormatException e) {
                 return defaultValue;
             }
@@ -101,12 +97,10 @@ public class ObjectUtils {
      */
     public static float objectToFloat(Object object, float defaultValue) {
         if (object == null) return defaultValue;
-        if (object instanceof Number) {
-            return ((Number) object).floatValue();
-        }
-        if (object instanceof String) {
+        if (object instanceof Number number) {return number.floatValue();}
+        if (object instanceof String string) {
             try {
-                return Float.parseFloat((String) object);
+                return Float.parseFloat(string);
             } catch (NumberFormatException e) {
                 return defaultValue;
             }
@@ -136,12 +130,10 @@ public class ObjectUtils {
      */
     public static long objectToLong(Object object, long defaultValue) {
         if (object == null) return defaultValue;
-        if (object instanceof Number) {
-            return ((Number) object).longValue();
-        }
-        if (object instanceof String) {
+        if (object instanceof Number number) {return number.longValue();}
+        if (object instanceof String string) {
             try {
-                return Long.parseLong((String) object);
+                return Long.parseLong(string);
             } catch (NumberFormatException e) {
                 return defaultValue;
             }
@@ -171,12 +163,10 @@ public class ObjectUtils {
      */
     public static double objectToDouble(Object object, double defaultValue) {
         if (object == null) return defaultValue;
-        if (object instanceof Number) {
-            return ((Number) object).doubleValue();
-        }
-        if (object instanceof String) {
+        if (object instanceof Number number) {return number.doubleValue();}
+        if (object instanceof String string) {
             try {
-                return Double.parseDouble((String) object);
+                return Double.parseDouble(string);
             } catch (NumberFormatException e) {
                 return defaultValue;
             }

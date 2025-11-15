@@ -1,19 +1,20 @@
 package de.jonas.engine.graphics;
 
-import de.jonas.engine.utils.Console;
-import de.jonas.engine.utils.FileUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.MemoryStack;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
+
+import de.jonas.engine.utils.Console;
+import de.jonas.engine.utils.FileUtils;
+
 public class Material {
-    private String pathString;
+    private final String pathString;
     private float width, height;
     private int textureID;
 

@@ -6,7 +6,7 @@ import de.jonas.engine.objects.game.MeshObject;
 
 public class Player extends MeshObject {
     private float moveSpeed = 0.05f;
-    private Camera camera;
+    private final Camera camera;
 
     public Player(Vector3f position, Vector3f rotation) {
         super(position,rotation,null);

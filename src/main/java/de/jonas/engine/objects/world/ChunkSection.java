@@ -1,5 +1,10 @@
     package de.jonas.engine.objects.world;
 
+    import java.util.ArrayList;
+    import java.util.concurrent.ExecutorService;
+    import java.util.concurrent.Executors;
+    import java.util.concurrent.ThreadPoolExecutor;
+
     import de.jonas.engine.data.StaticData;
     import de.jonas.engine.data.blocks.Default;
     import de.jonas.engine.graphics.Material;
@@ -12,14 +17,11 @@
     import de.jonas.engine.objects.game.player.Player;
     import de.jonas.engine.utils.Console;
     import de.jonas.engine.utils.MainThreadExecutor;
-    import java.util.ArrayList;
-    import java.util.concurrent.ExecutorService;
-    import java.util.concurrent.Executors;
 
     public class ChunkSection extends MeshObject {
-        private short sectionHeight;
-        private Chunk parrentChunk;
-        private Voxel[][][] voxels = new Voxel[StaticData.SECTION_SIZE][StaticData.SECTION_SIZE][StaticData.SECTION_SIZE];
+        private final short sectionHeight;
+        private final Chunk parrentChunk;
+        private final Voxel[][][] voxels = new Voxel[StaticData.SECTION_SIZE][StaticData.SECTION_SIZE][StaticData.SECTION_SIZE];
         //TODO Check if valid pls Idk if this code is right.
         private static final ExecutorService meshThreadPool = Executors.newFixedThreadPool(4);
         private boolean needsReloading = false;
@@ -40,7 +42,7 @@
             setNeedsReloading();
         }
 
-        public void generateVoxels() {
+        public final void generateVoxels() {
             for (int x = 0; x < StaticData.SECTION_SIZE; x++) {
                 for (int y = 0; y < StaticData.SECTION_SIZE; y++) {
                     for (int z = 0; z < StaticData.SECTION_SIZE; z++) {
@@ -53,8 +55,8 @@
         private void generateMesh(ResultCallback callback) {
             new Thread(() -> {
                 try {
-                    ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-                    ArrayList<Integer> indices = new ArrayList<Integer>();
+                    ArrayList<Vertex> vertices = new ArrayList<>();
+                    ArrayList<Integer> indices = new ArrayList<>();
                     for (int x = 0; x < StaticData.SECTION_SIZE; x++) {
                         for (int y = 0; y < StaticData.SECTION_SIZE; y++) {
                             for (int z = 0; z < StaticData.SECTION_SIZE; z++) {
@@ -195,7 +197,7 @@
                     for (int i = 0; i < indices.size(); i++) {
                         newIndices[i] = indices.get(i);
                     }
-                    Vertex[] newVertices = vertices.toArray(new Vertex[0]);
+                    Vertex[] newVertices = vertices.toArray(Vertex[]::new);
 
                     vertices.clear();
                     indices.clear();
@@ -210,7 +212,7 @@
                         this.needsReloading = false;
                     });
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Console.printFatal("Error while trying to generate a mesh for a ChunkSection.", false);
                 }
             }).start();
         }
@@ -220,21 +222,17 @@
                 generateMesh(result -> setMesh(result));
             });
             //TODO Add thread debug menu like this.
-//            ThreadPoolExecutor executor = (ThreadPoolExecutor) meshThreadPool;
-//
-//            System.out.println("Active Threads: " + executor.getActiveCount());
-//            System.out.println("Pool Size: " + executor.getPoolSize());
-//            System.out.println("Completed Tasks: " + executor.getCompletedTaskCount());
-//            System.out.println("Task Count: " + executor.getTaskCount());
-//            System.out.println("Is Shutdown: " + executor.isShutdown());
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) meshThreadPool;
+
+            System.out.println("Active Threads: " + executor.getActiveCount());
+            System.out.println("Pool Size: " + executor.getPoolSize());
+            System.out.println("Completed Tasks: " + executor.getCompletedTaskCount());
+            System.out.println("Task Count: " + executor.getTaskCount());
+            System.out.println("Is Shutdown: " + executor.isShutdown());
         }
 
         private boolean isAir(Vector3f pos) {
-            if (voxels[(int) pos.getX()][(int) pos.getY()][(int) pos.getZ()].getVoxelID().equalsIgnoreCase("air")) {
-                return true;
-            } else {
-                return false;
-            }
+            return voxels[(int) pos.getX()][(int) pos.getY()][(int) pos.getZ()].getVoxelID().equalsIgnoreCase("air");
         }
 
         public void render(Renderer renderer, Player player) {
@@ -242,7 +240,7 @@
             renderer.renderGameObject(this,player.getCamera());
         }
 
-        public void setNeedsReloading() {
+        public final void setNeedsReloading() {
             if (!needsReloading) {
                 this.needsReloading = true;
                 parrentChunk.getParrentWorld().setNeedsReloading(this);
@@ -256,8 +254,7 @@
         private void addFace(ArrayList<Vertex> vertices, ArrayList<Integer> indices, Vertex[] faceVerticesTemplate, int[] faceIndicesTemplate, Vector3f voxelPosition) {
             int baseVertexIndex = vertices.size();
 
-            for (int i = 0; i < faceVerticesTemplate.length; i++) {
-                Vertex templateVertex = faceVerticesTemplate[i];
+            for (Vertex templateVertex : faceVerticesTemplate) {
                 Vector3f templatePos = templateVertex.getPos();
                 Vector3f newPos = Vector3f.add(templatePos,voxelPosition);
                 //TODO Calculate texture cords via atlas texture.
@@ -280,6 +277,10 @@
 
         public Voxel getVoxel(Vector3f voxelSectionPos) {
             return voxels[(int) voxelSectionPos.getX()][(int) voxelSectionPos.getY()][(int) voxelSectionPos.getZ()];
+        }
+
+        public static ExecutorService getMeshThreadPool() {
+            return meshThreadPool;
         }
 
         interface ResultCallback {
