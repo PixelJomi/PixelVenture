@@ -4,7 +4,7 @@
 
 ## **The Team:**
 - Jomicraft / PixelJomi (Jonas) -> Dev
-- Luzy -> Creative Design / Artwork
+- Luzi -> Creative Design / Artwork
 ## **Thanks:**
 Thanks to [CodingAP`s Playlist](https://youtube.com/playlist?list=PLaWuTOi9sDeomi2umQ7N8Lqs-GtE1H4-b&si=M4f_bM-53jZ11nZa) 
 and the author of the [LWJGL 3 3D book](https://ahbejarano.gitbook.io/lwjglgamedev), 
